@@ -1,0 +1,985 @@
+{
+  "schema_version": 2,
+  "kind": "ami_solar_bill_change_virtual_household_demo",
+  "generated_at": "2026-09-04T12:55:07+09:00",
+  "demo_notice": "공식 AMI 공모 표본을 참고한 12개월 시연용 샘플입니다. 실제 고객 주소·사용 기록·청구서가 아닙니다.",
+  "location": {
+    "label": "제주특별자치도 제주시 애월읍",
+    "description": "공모 시연용 예시 주소입니다. 실제 주소는 저장하지 않습니다.",
+    "latitude": 33.4576,
+    "longitude": 126.3322
+  },
+  "period": {
+    "start": "2025-09-01",
+    "end": "2026-08-31",
+    "label": "지난 1년 · 2025년 9월~2026년 8월"
+  },
+  "input_summary": {
+    "address": "제주특별자치도 제주시 애월읍 · 시연용 예시 주소",
+    "sunlight": "이 위치의 지난 1년 시간별 일사량·기상자료를 월별로 합산",
+    "home_use": "공식 AMI 표본을 참고해 구성한 우리 집의 12개월 시연용 전기 사용량",
+    "tariff": "주택용 저압 기준으로 남는 태양광 전기를 다음 달 사용량에서 빼고 요금을 다시 계산"
+  },
+  "sources": {
+    "ami_sample": {
+      "meter_id": "A-L-48",
+      "complete_15_minute_days": 13,
+      "mean_daily_kwh": 2.99
+    },
+    "weather": {
+      "provider": "Open-Meteo Archive API",
+      "request_url": "https://archive-api.open-meteo.com/v1/archive?latitude=33.4576&longitude=126.3322&start_date=2025-09-01&end_date=2026-08-31&hourly=global_tilted_irradiance%2Cshortwave_radiation%2Ctemperature_2m%2Ccloud_cover&tilt=26&azimuth=0&timezone=Asia%2FSeoul",
+      "fetched_at": "2026-09-04T12:54:11+09:00",
+      "interpretation": "공모 시연용 가상 주소의 지난 1년 기상·일사량 입력이며 실제 고객 주소 결과가 아님"
+    },
+    "tariff": {
+      "label": "주택용 저압·남는 태양광 전기를 다음 달 사용량에서 빼는 방식",
+      "source": "주택용 저압 기본요금·전력량요금 3구간 공개표",
+      "source_url": "https://easylaw.go.kr/CSP/CnpClsMain.laf?ccfNo=2&cciNo=1&cnpClsNo=1&csmSeq=1008&menuType=cnpcls&popMenu=ov",
+      "rates_won_per_kwh": [
+        120,
+        214.6,
+        307.3
+      ],
+      "basic_won": [
+        910,
+        1600,
+        7300
+      ]
+    }
+  },
+  "calculation_scope": "예상 전기요금은 주택용 저압의 기본요금과 전력량요금만 비교합니다. 연료비·기후환경요금·부가세·기금·TV수신료·개별 할인과 실제 검침일은 포함하지 않습니다.",
+  "actual_service_scope": "실제 서비스에서는 고객 동의 기반 12개월 AMI 사용 기록과 계약종별·검침일을 적용합니다.",
+  "monthly_sunlight": [
+    {
+      "month": "2025-09",
+      "sunlight_kwh_m2": 146.1,
+      "average_temperature_c": 26.6,
+      "average_cloud_cover_percent": 61
+    },
+    {
+      "month": "2025-10",
+      "sunlight_kwh_m2": 129.4,
+      "average_temperature_c": 21.1,
+      "average_cloud_cover_percent": 55.9
+    },
+    {
+      "month": "2025-11",
+      "sunlight_kwh_m2": 116,
+      "average_temperature_c": 14.1,
+      "average_cloud_cover_percent": 49.8
+    },
+    {
+      "month": "2025-12",
+      "sunlight_kwh_m2": 96.7,
+      "average_temperature_c": 9.7,
+      "average_cloud_cover_percent": 62.1
+    },
+    {
+      "month": "2026-01",
+      "sunlight_kwh_m2": 97.4,
+      "average_temperature_c": 6,
+      "average_cloud_cover_percent": 67.7
+    },
+    {
+      "month": "2026-02",
+      "sunlight_kwh_m2": 116.2,
+      "average_temperature_c": 7.9,
+      "average_cloud_cover_percent": 61.7
+    },
+    {
+      "month": "2026-03",
+      "sunlight_kwh_m2": 149.2,
+      "average_temperature_c": 10.1,
+      "average_cloud_cover_percent": 67.1
+    },
+    {
+      "month": "2026-04",
+      "sunlight_kwh_m2": 129.2,
+      "average_temperature_c": 14.6,
+      "average_cloud_cover_percent": 77.3
+    },
+    {
+      "month": "2026-05",
+      "sunlight_kwh_m2": 180,
+      "average_temperature_c": 19.2,
+      "average_cloud_cover_percent": 51.8
+    },
+    {
+      "month": "2026-06",
+      "sunlight_kwh_m2": 150.2,
+      "average_temperature_c": 22.1,
+      "average_cloud_cover_percent": 80
+    },
+    {
+      "month": "2026-07",
+      "sunlight_kwh_m2": 179.9,
+      "average_temperature_c": 27.7,
+      "average_cloud_cover_percent": 59.9
+    },
+    {
+      "month": "2026-08",
+      "sunlight_kwh_m2": 177.3,
+      "average_temperature_c": 28.6,
+      "average_cloud_cover_percent": 52.9
+    }
+  ],
+  "capacities": [
+    {
+      "capacity_kwp": 3,
+      "months": [
+        {
+          "month": "2025-09",
+          "home_use_kwh": 370,
+          "sunlight_kwh_m2": 146.1,
+          "solar_kwh": 294.7,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 75.3,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 60482,
+            "total_won": 62082
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 9034,
+            "total_won": 9944
+          },
+          "saved_won": 52138
+        },
+        {
+          "month": "2025-10",
+          "home_use_kwh": 340,
+          "sunlight_kwh_m2": 129.4,
+          "solar_kwh": 261,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 79,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 54044,
+            "total_won": 55644
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 9477,
+            "total_won": 10387
+          },
+          "saved_won": 45257
+        },
+        {
+          "month": "2025-11",
+          "home_use_kwh": 410,
+          "sunlight_kwh_m2": 116,
+          "solar_kwh": 234,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 176,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 69993,
+            "total_won": 77293
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 21121,
+            "total_won": 22031
+          },
+          "saved_won": 55262
+        },
+        {
+          "month": "2025-12",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 96.7,
+          "solar_kwh": 195.1,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 274.9,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 40081,
+            "total_won": 41681
+          },
+          "saved_won": 54050
+        },
+        {
+          "month": "2026-01",
+          "home_use_kwh": 520,
+          "sunlight_kwh_m2": 97.4,
+          "solar_kwh": 196.5,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 323.5,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 103796,
+            "total_won": 111096
+          },
+          "after": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 50508,
+            "total_won": 52108
+          },
+          "saved_won": 58988
+        },
+        {
+          "month": "2026-02",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 116.2,
+          "solar_kwh": 234.4,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 235.6,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 31640,
+            "total_won": 33240
+          },
+          "saved_won": 62491
+        },
+        {
+          "month": "2026-03",
+          "home_use_kwh": 400,
+          "sunlight_kwh_m2": 149.2,
+          "solar_kwh": 301,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 99,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 66920,
+            "total_won": 68520
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 11884,
+            "total_won": 12794
+          },
+          "saved_won": 55726
+        },
+        {
+          "month": "2026-04",
+          "home_use_kwh": 350,
+          "sunlight_kwh_m2": 129.2,
+          "solar_kwh": 260.6,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 89.4,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 56190,
+            "total_won": 57790
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 10725,
+            "total_won": 11635
+          },
+          "saved_won": 46155
+        },
+        {
+          "month": "2026-05",
+          "home_use_kwh": 330,
+          "sunlight_kwh_m2": 180,
+          "solar_kwh": 363.1,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 33.1,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 51898,
+            "total_won": 53498
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 53498
+        },
+        {
+          "month": "2026-06",
+          "home_use_kwh": 390,
+          "sunlight_kwh_m2": 150.2,
+          "solar_kwh": 303,
+          "credit_in_kwh": 33.1,
+          "net_metered_kwh": 53.9,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 64774,
+            "total_won": 66374
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 6470,
+            "total_won": 7380
+          },
+          "saved_won": 58994
+        },
+        {
+          "month": "2026-07",
+          "home_use_kwh": 570,
+          "sunlight_kwh_m2": 179.9,
+          "solar_kwh": 362.9,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 207.1,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 105066,
+            "total_won": 112366
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 24853,
+            "total_won": 25763
+          },
+          "saved_won": 86603
+        },
+        {
+          "month": "2026-08",
+          "home_use_kwh": 610,
+          "sunlight_kwh_m2": 177.3,
+          "solar_kwh": 357.6,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 252.4,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 117358,
+            "total_won": 124658
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 30282,
+            "total_won": 31192
+          },
+          "saved_won": 93466
+        }
+      ],
+      "annual": {
+        "home_use_kwh": 5230,
+        "solar_kwh": 3363.9,
+        "before_won": 980783,
+        "after_won": 258155,
+        "saved_won": 722628,
+        "tier_drop_months": 12,
+        "third_to_second_months": 3,
+        "third_to_first_months": 3,
+        "credit_at_period_end_kwh": 0
+      }
+    },
+    {
+      "capacity_kwp": 4,
+      "months": [
+        {
+          "month": "2025-09",
+          "home_use_kwh": 370,
+          "sunlight_kwh_m2": 146.1,
+          "solar_kwh": 393,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 23,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 60482,
+            "total_won": 62082
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 62082
+        },
+        {
+          "month": "2025-10",
+          "home_use_kwh": 340,
+          "sunlight_kwh_m2": 129.4,
+          "solar_kwh": 348,
+          "credit_in_kwh": 23,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 31,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 54044,
+            "total_won": 55644
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 55644
+        },
+        {
+          "month": "2025-11",
+          "home_use_kwh": 410,
+          "sunlight_kwh_m2": 116,
+          "solar_kwh": 312,
+          "credit_in_kwh": 31,
+          "net_metered_kwh": 67,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 69993,
+            "total_won": 77293
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 8043,
+            "total_won": 8953
+          },
+          "saved_won": 68340
+        },
+        {
+          "month": "2025-12",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 96.7,
+          "solar_kwh": 260.1,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 209.9,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 26128,
+            "total_won": 27728
+          },
+          "saved_won": 68003
+        },
+        {
+          "month": "2026-01",
+          "home_use_kwh": 520,
+          "sunlight_kwh_m2": 97.4,
+          "solar_kwh": 262,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 258,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 103796,
+            "total_won": 111096
+          },
+          "after": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 36454,
+            "total_won": 38054
+          },
+          "saved_won": 73042
+        },
+        {
+          "month": "2026-02",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 116.2,
+          "solar_kwh": 312.5,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 157.5,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 18896,
+            "total_won": 19806
+          },
+          "saved_won": 75925
+        },
+        {
+          "month": "2026-03",
+          "home_use_kwh": 400,
+          "sunlight_kwh_m2": 149.2,
+          "solar_kwh": 401.3,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 1.3,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 66920,
+            "total_won": 68520
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 68520
+        },
+        {
+          "month": "2026-04",
+          "home_use_kwh": 350,
+          "sunlight_kwh_m2": 129.2,
+          "solar_kwh": 347.5,
+          "credit_in_kwh": 1.3,
+          "net_metered_kwh": 1.2,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 56190,
+            "total_won": 57790
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 146,
+            "total_won": 1056
+          },
+          "saved_won": 56734
+        },
+        {
+          "month": "2026-05",
+          "home_use_kwh": 330,
+          "sunlight_kwh_m2": 180,
+          "solar_kwh": 484.1,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 154.1,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 51898,
+            "total_won": 53498
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 53498
+        },
+        {
+          "month": "2026-06",
+          "home_use_kwh": 390,
+          "sunlight_kwh_m2": 150.2,
+          "solar_kwh": 404,
+          "credit_in_kwh": 154.1,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 168.1,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 64774,
+            "total_won": 66374
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 66374
+        },
+        {
+          "month": "2026-07",
+          "home_use_kwh": 570,
+          "sunlight_kwh_m2": 179.9,
+          "solar_kwh": 483.9,
+          "credit_in_kwh": 168.1,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 82,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 105066,
+            "total_won": 112366
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 112366
+        },
+        {
+          "month": "2026-08",
+          "home_use_kwh": 610,
+          "sunlight_kwh_m2": 177.3,
+          "solar_kwh": 476.9,
+          "credit_in_kwh": 82,
+          "net_metered_kwh": 51.2,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 117358,
+            "total_won": 124658
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 6140,
+            "total_won": 7050
+          },
+          "saved_won": 117608
+        }
+      ],
+      "annual": {
+        "home_use_kwh": 5230,
+        "solar_kwh": 4485.3,
+        "before_won": 980783,
+        "after_won": 102647,
+        "saved_won": 878136,
+        "tier_drop_months": 12,
+        "third_to_second_months": 2,
+        "third_to_first_months": 3,
+        "credit_at_period_end_kwh": 0
+      }
+    },
+    {
+      "capacity_kwp": 5,
+      "months": [
+        {
+          "month": "2025-09",
+          "home_use_kwh": 370,
+          "sunlight_kwh_m2": 146.1,
+          "solar_kwh": 491.2,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 121.2,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 60482,
+            "total_won": 62082
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 62082
+        },
+        {
+          "month": "2025-10",
+          "home_use_kwh": 340,
+          "sunlight_kwh_m2": 129.4,
+          "solar_kwh": 435,
+          "credit_in_kwh": 121.2,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 216.2,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 54044,
+            "total_won": 55644
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 55644
+        },
+        {
+          "month": "2025-11",
+          "home_use_kwh": 410,
+          "sunlight_kwh_m2": 116,
+          "solar_kwh": 390,
+          "credit_in_kwh": 216.2,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 196.2,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 69993,
+            "total_won": 77293
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 77293
+        },
+        {
+          "month": "2025-12",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 96.7,
+          "solar_kwh": 325.1,
+          "credit_in_kwh": 196.2,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 51.3,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 95731
+        },
+        {
+          "month": "2026-01",
+          "home_use_kwh": 520,
+          "sunlight_kwh_m2": 97.4,
+          "solar_kwh": 327.5,
+          "credit_in_kwh": 51.3,
+          "net_metered_kwh": 141.2,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 103796,
+            "total_won": 111096
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 16946,
+            "total_won": 17856
+          },
+          "saved_won": 93240
+        },
+        {
+          "month": "2026-02",
+          "home_use_kwh": 470,
+          "sunlight_kwh_m2": 116.2,
+          "solar_kwh": 390.7,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 79.3,
+          "credit_out_kwh": 0,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 88431,
+            "total_won": 95731
+          },
+          "after": {
+            "tier": 1,
+            "basic_won": 910,
+            "energy_won": 9520,
+            "total_won": 10430
+          },
+          "saved_won": 85301
+        },
+        {
+          "month": "2026-03",
+          "home_use_kwh": 400,
+          "sunlight_kwh_m2": 149.2,
+          "solar_kwh": 501.6,
+          "credit_in_kwh": 0,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 101.6,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 66920,
+            "total_won": 68520
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 68520
+        },
+        {
+          "month": "2026-04",
+          "home_use_kwh": 350,
+          "sunlight_kwh_m2": 129.2,
+          "solar_kwh": 434.4,
+          "credit_in_kwh": 101.6,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 186,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 56190,
+            "total_won": 57790
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 57790
+        },
+        {
+          "month": "2026-05",
+          "home_use_kwh": 330,
+          "sunlight_kwh_m2": 180,
+          "solar_kwh": 605.2,
+          "credit_in_kwh": 186,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 461.1,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 51898,
+            "total_won": 53498
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 53498
+        },
+        {
+          "month": "2026-06",
+          "home_use_kwh": 390,
+          "sunlight_kwh_m2": 150.2,
+          "solar_kwh": 505,
+          "credit_in_kwh": 461.1,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 576.1,
+          "before": {
+            "tier": 2,
+            "basic_won": 1600,
+            "energy_won": 64774,
+            "total_won": 66374
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 66374
+        },
+        {
+          "month": "2026-07",
+          "home_use_kwh": 570,
+          "sunlight_kwh_m2": 179.9,
+          "solar_kwh": 604.8,
+          "credit_in_kwh": 576.1,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 610.9,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 105066,
+            "total_won": 112366
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 112366
+        },
+        {
+          "month": "2026-08",
+          "home_use_kwh": 610,
+          "sunlight_kwh_m2": 177.3,
+          "solar_kwh": 596.1,
+          "credit_in_kwh": 610.9,
+          "net_metered_kwh": 0,
+          "credit_out_kwh": 597,
+          "before": {
+            "tier": 3,
+            "basic_won": 7300,
+            "energy_won": 117358,
+            "total_won": 124658
+          },
+          "after": {
+            "tier": 0,
+            "basic_won": 0,
+            "energy_won": 0,
+            "total_won": 0
+          },
+          "saved_won": 124658
+        }
+      ],
+      "annual": {
+        "home_use_kwh": 5230,
+        "solar_kwh": 5606.6,
+        "before_won": 980783,
+        "after_won": 28286,
+        "saved_won": 952497,
+        "tier_drop_months": 12,
+        "third_to_second_months": 0,
+        "third_to_first_months": 2,
+        "credit_at_period_end_kwh": 597
+      }
+    }
+  ],
+  "recommendation": {
+    "capacity_kwp": 4,
+    "title": "4kW를 먼저 살펴보세요",
+    "reason": "지난 1년 사용량과 가장 균형이 맞고, 계산 기간이 끝난 뒤 남는 전기도 없습니다.",
+    "highlight_month": "2025-12",
+    "highlight_before_tier": 3,
+    "highlight_after_tier": 2
+  },
+  "data_receipt": {
+    "weather_hours": 8760,
+    "weather_variables": "경사면 일사량·기온·구름량",
+    "weather_interval": "1시간마다",
+    "ami_interval": "15분 원본",
+    "ami_sample_days": 13,
+    "billing_months": 12
+  }
+}
