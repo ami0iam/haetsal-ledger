@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="우리 집 위치의 지난 날씨와 전기 사용량으로 태양광 설치 전후의 전기요금 변화를 계산해 보는 동작형 웹 시제품">
+  <meta name="description" content="우리 집 위치의 지난해 날씨와 AMI 표본 기반 전기 사용 샘플로 태양광 설치 시 예상 전기요금 절감 효과를 계산하는 동작형 웹 시제품">
   <meta name="theme-color" content="#124834">
   <title>햇살가계부 · 우리 집 태양광 미리 보기</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%23f5c651'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23124834'/%3E%3C/svg%3E">
@@ -11,9 +11,9 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="#top" class="brand">햇살가계부 <span>태양광 설치 전 미리 보기</span></a>
+    <a href="#top" class="brand">햇살가계부 <span>우리 집 태양광 절감 효과 미리 보기</span></a>
     <nav class="site-nav" aria-label="화면 바로가기">
-      <a href="#location">주소 검색</a><a href="#result">최종 판단</a><a href="#replay">월별 계산</a><a href="#evidence">계산 근거</a>
+      <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#replay">월별 계산</a><a href="#evidence">계산 근거</a>
       <span class="header-note"><i aria-hidden="true"></i>동작형 웹 시제품</span>
     </nav>
   </header>
@@ -22,11 +22,11 @@
     <div id="error" class="status-card error" role="alert" hidden></div>
     <div id="app" hidden>
       <section id="top" class="hero">
-        <p class="eyebrow">우리 집에 맞는 태양광 크기를 찾는 서비스</p>
+        <p class="eyebrow">우리 집 태양광 절감 효과를 미리 보는 서비스</p>
         <h1>작년 우리 집에<br><em>태양광이 있었다면?</em></h1>
-        <p class="hero-copy">작년 우리 집에 비친 햇빛과 구름, 기온으로 태양광 발전량을 예측하고 전기 사용량과 겹쳐 봤어요. 3·4·5kW 가운데 먼저 살펴볼 크기와 전기요금 변화를 함께 확인해 보세요.</p>
-        <div class="hero-steps" aria-label="서비스 이용 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>3·4·5kW 전기요금 비교</span></div>
-        <a class="primary-link" href="#location">우리 집 위치로 계산해 보기 <span aria-hidden="true">↓</span></a>
+        <p class="hero-copy">주소를 입력하면 지난해 우리 집 위치의 날씨로 태양광 발전량을 예측해요. 태양광이 있었다면 1년 전기요금이 얼마나 줄었을지, 설치 용량에 따라 절감 효과가 어떻게 달라지는지 확인해 보세요.</p>
+        <div class="hero-steps" aria-label="서비스 이용 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>태양광 설치 효과 계산</span></div>
+        <a class="primary-link" href="#location">우리 집 예상 절감액 계산하기 <span aria-hidden="true">↓</span></a>
         <p class="demo-notice" id="demo-notice"></p>
       </section>
 
@@ -50,23 +50,23 @@
       </section>
 
       <section id="progress" class="screen section-shell pale" aria-labelledby="progress-title" hidden>
-        <div class="section-heading"><div><p class="eyebrow">계산 중</p><h2 id="progress-title" tabindex="-1">지난해 우리 집 위치를 계산하고 있어요</h2></div><p>주소 위치 확인부터 3·4·5kW 요금 비교까지 순서대로 진행해요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">계산 중</p><h2 id="progress-title" tabindex="-1">우리 집 태양광 절감 효과를 계산하고 있어요</h2></div><p>주소 위치 확인부터 설치 용량별 절감 효과 비교까지 순서대로 진행해요.</p></div>
         <ol id="progress-steps" class="progress-steps"></ol>
       </section>
 
       <section id="result" class="screen section-shell" aria-labelledby="result-title">
-        <div class="section-heading"><div><p class="eyebrow">2. 최종 판단</p><h2 id="result-title" tabindex="-1">우리 집에는<br>몇 kW가 가장 알맞을까요?</h2></div><p>설치 적합성을 확정하지 않고, 먼저 살펴볼 크기를 알려드려요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">2. 예상 절감 효과</p><h2 id="result-title" tabindex="-1">우리 집에 태양광이 있었다면<br>얼마나 아낄 수 있었을까요?</h2></div><p>지난 1년을 기준으로 설치 용량별 전기요금 절감 효과를 비교해요.</p></div>
 
         <article class="summary-card">
           <div class="summary-lead">
-            <p class="mini-label">우리 집에서 먼저 살펴볼 용량</p>
-            <h3 id="summary-capacity"></h3>
+            <p class="mini-label">지난 1년 기준 예상 절감액</p>
+            <h3 id="summary-saved"></h3>
             <p id="summary-reason"></p>
           </div>
           <div class="summary-figures">
             <div class="summary-figure">
-              <p>연간 예상 절감액</p>
-              <div class="summary-figure-row"><strong id="summary-saved"></strong><span class="inline-sample-badge" id="sample-badge"></span></div>
+              <p>계산에 적용한 태양광 용량</p>
+              <div class="summary-figure-row"><strong id="summary-capacity"></strong><span class="inline-sample-badge" id="sample-badge"></span></div>
             </div>
             <div class="summary-figure-pair">
               <div><p>설치 전 대비 절감률</p><strong id="summary-rate"></strong></div>
@@ -74,9 +74,10 @@
             </div>
           </div>
           <div class="summary-compare">
-            <p class="mini-label">3·4·5kW 연 절감액</p>
+            <p class="mini-label">설치 용량별 연간 예상 절감액</p>
             <div class="result-cards" id="result-cards"></div>
           </div>
+          <p class="summary-scope-note">표시 금액은 설치비·지원금·유지관리비를 제외한 전기요금 절감 효과입니다.</p>
           <ul class="basis-chips">
             <li>입력한 주소의 실제 지난해 날씨</li>
             <li>공식 AMI 표본을 참고한 전기 사용 샘플</li>
@@ -85,13 +86,13 @@
         </article>
 
         <article class="delta-card">
-          <div class="card-heading"><div><p class="mini-label">추천 이유 · 추가 1kW의 가치</p><h3>용량을 1kW 올릴 때 연 절감액이 얼마나 더 늘어나는지 비교했어요</h3></div></div>
+          <div class="card-heading"><div><p class="mini-label">설치 크기에 따라 달라지는 절감 효과</p><h3>용량을 1kW 올리면 전기요금을 얼마나 더 아낄 수 있을까요?</h3></div></div>
           <div class="delta-grid" id="capacity-deltas"></div>
           <p class="breakdown-note" id="delta-note"></p>
         </article>
 
         <article class="capacity-explorer">
-          <div class="card-heading"><div><p class="mini-label">용량을 선택해 보세요</p><h3>선택한 용량의 발전량·전기요금·절감액을 함께 보여드려요</h3></div></div>
+          <div class="card-heading"><div><p class="mini-label">설치 용량별 예상 이익 비교</p><h3>용량을 바꿔 보며 전기요금 절감 효과를 비교해 보세요</h3></div></div>
           <div class="capacity-tabs" id="capacity-tabs" role="tablist" aria-label="설치 용량 선택"></div>
           <div class="capacity-panel" id="capacity-panel" role="tabpanel" tabindex="0">
             <div class="capacity-metrics" id="capacity-metrics"></div>

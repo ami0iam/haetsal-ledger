@@ -364,6 +364,7 @@ footer strong { color: var(--ink-soft); }
 .compare-item.is-recommended strong { color: var(--lime); }
 .basis-chips { display: flex; gap: .5rem; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
 .basis-chips li { padding: .4rem .7rem; border-radius: 999px; background: rgba(255, 255, 255, .08); color: #eaf3e8; font-size: .72rem; font-weight: 700; }
+.summary-scope-note { margin: -.15rem 0 0; color: #d8e7d8; font-size: .72rem; line-height: 1.55; }
 
 .delta-card { margin-top: 1rem; padding: clamp(1.2rem, 3vw, 1.65rem); border: 1px solid #efdfa7; border-radius: 22px; background: linear-gradient(130deg, #fffdf1, #fff9df); }
 .delta-card h3 { max-width: 35rem; margin: .28rem 0 0; font-size: clamp(1.15rem, 3vw, 1.6rem); line-height: 1.28; letter-spacing: -.055em; word-break: keep-all; }

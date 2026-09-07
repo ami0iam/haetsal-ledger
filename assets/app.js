@@ -19,7 +19,7 @@ const usesStaticServices = new URLSearchParams(window.location.search).has("stat
   || !localHosts.includes(window.location.hostname);
 const locationSearchCache = new Map();
 const demoDataUrls = ["data/demo.json", "../data/demo.json"];
-const progressStepLabels = ["주소 위치 확인", "지난해 시간별 날씨 분석", "3·4·5kW 전기요금 비교"];
+const progressStepLabels = ["주소 위치 확인", "지난해 시간별 날씨 분석", "설치 용량별 절감 효과 비교"];
 let baseDemoData = null;
 let currentData = null;
 let selectedCapacity = null;
@@ -44,8 +44,8 @@ function selectedScenario(data) {
 function renderProgress(activeIndex) {
   progressSection.hidden = false;
   progressTitle.textContent = activeIndex >= progressStepLabels.length
-    ? "계산 완료 — 먼저 살펴볼 용량을 찾았어요"
-    : "지난해 우리 집 위치를 계산하고 있어요";
+    ? "계산 완료 — 우리 집 예상 절감액을 구했어요"
+    : "우리 집 태양광 절감 효과를 계산하고 있어요";
   progressList.innerHTML = progressStepLabels.map((label, index) => {
     const state = index < activeIndex ? "is-done" : index === activeIndex ? "is-active" : "";
     const icon = index < activeIndex ? "✓" : index === activeIndex ? "" : String(index + 1);
@@ -221,13 +221,13 @@ function renderSummary(data, recommendation) {
   $("#summary-saved").textContent = won(recommendedAnnual.saved_won);
   $("#summary-rate").textContent = `${number(recommendedAnnual.saved_won / recommendedAnnual.before_won * 100, 1)}%`;
   $("#summary-before").textContent = won(recommendedAnnual.before_won);
-  $("#summary-reason").textContent = `${recommendation.reason} ${tierSentence(recommended)}`;
+  $("#summary-reason").textContent = `${recommendation.capacity_kwp}kW를 설치했다고 가정한 결과예요. ${tierSentence(recommended)}`;
   $("#sample-badge").textContent = data.input_summary.home_use.includes("시연용")
     ? "시제품 계산 · 전기 사용량 샘플 적용 중"
     : "입력한 전기 사용량 기준";
   $("#result-cards").innerHTML = data.capacities.map((item) => {
     const isRecommended = item.capacity_kwp === recommendation.capacity_kwp;
-    return `<div class="compare-item ${isRecommended ? "is-recommended" : ""}"><span>${item.capacity_kwp}kW${isRecommended ? " · 먼저 살펴볼 크기" : ""}</span><strong>연 ${won(item.annual.saved_won)}</strong></div>`;
+    return `<div class="compare-item ${isRecommended ? "is-recommended" : ""}"><span>${item.capacity_kwp}kW${isRecommended ? " · 절감 효율 균형" : ""}</span><strong>연 ${won(item.annual.saved_won)}</strong></div>`;
   }).join("");
 }
 
@@ -236,7 +236,7 @@ function renderCapacityTabs(data) {
   capacityTabs.innerHTML = data.capacities.map((item) => {
     const isActive = item.capacity_kwp === active;
     const isRecommended = item.capacity_kwp === data.recommendation.capacity_kwp;
-    return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small>${isRecommended ? "먼저 살펴볼 크기" : "다른 크기 보기"}</small></button>`;
+    return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small>${isRecommended ? "절감 효율 균형" : "절감액 비교"}</small></button>`;
   }).join("");
   $("#capacity-panel").setAttribute("aria-labelledby", `capacity-tab-${active}`);
 }
@@ -266,8 +266,8 @@ function renderDeltas(data) {
   $("#capacity-deltas").innerHTML = steps.map((step) => `<div class="delta-item"><span>${step.from}kW → ${step.to}kW</span><strong>연 +${won(step.perKw)}</strong><small>용량 1kW가 늘 때 늘어나는 연 절감액</small></div>`).join("");
   const last = steps[steps.length - 1];
   $("#delta-note").textContent = last && last.perKw < steps[0].perKw
-    ? `${last.to}kW는 발전량은 늘지만 1kW당 추가 절감액이 ${won(last.perKw)}로 줄고, 계산 기간이 끝난 뒤 ${number(last.credit)}kWh가 남습니다. 그래서 ${data.recommendation.capacity_kwp}kW를 먼저 살펴볼 크기로 안내해요.`
-    : `용량을 올릴 때 늘어나는 연 절감액을 비교해 ${data.recommendation.capacity_kwp}kW를 먼저 살펴볼 크기로 안내해요.`;
+    ? `${last.to}kW는 발전량은 늘지만 1kW당 추가 절감액이 ${won(last.perKw)}로 줄고, 계산 기간이 끝난 뒤 ${number(last.credit)}kWh가 남습니다. 같은 1kW를 더 설치해도 절감액 증가폭은 달라질 수 있어요.`
+    : "설치 용량이 커질수록 늘어나는 연간 절감액을 함께 비교해 보세요.";
 }
 
 function selectCapacity(capacityKwp) {
