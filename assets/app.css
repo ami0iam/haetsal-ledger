@@ -366,6 +366,15 @@ footer strong { color: var(--ink-soft); }
 .basis-chips li { padding: .4rem .7rem; border-radius: 999px; background: rgba(255, 255, 255, .08); color: #eaf3e8; font-size: .72rem; font-weight: 700; }
 .summary-scope-note { margin: -.15rem 0 0; color: #d8e7d8; font-size: .72rem; line-height: 1.55; }
 
+.evidence-data-details > .fine-print { margin: .85rem 0 0; }
+.monthly-table-wrap { overflow-x: auto; margin-top: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
+.monthly-table-wrap table { width: 100%; min-width: 42rem; border-collapse: collapse; font-size: .75rem; font-variant-numeric: tabular-nums; }
+.monthly-table-wrap caption { padding: .9rem 1rem .65rem; color: var(--ink); font-size: .82rem; font-weight: 850; text-align: left; }
+.monthly-table-wrap th, .monthly-table-wrap td { padding: .7rem .8rem; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.monthly-table-wrap thead th { color: var(--muted); background: #f4f8f1; font-weight: 800; }
+.monthly-table-wrap th:first-child, .monthly-table-wrap td:first-child { text-align: left; }
+.monthly-table-wrap tbody tr:hover { background: #f8fbf6; }
+
 .delta-card { margin-top: 1rem; padding: clamp(1.2rem, 3vw, 1.65rem); border: 1px solid #efdfa7; border-radius: 22px; background: linear-gradient(130deg, #fffdf1, #fff9df); }
 .delta-card h3 { max-width: 35rem; margin: .28rem 0 0; font-size: clamp(1.15rem, 3vw, 1.6rem); line-height: 1.28; letter-spacing: -.055em; word-break: keep-all; }
 .delta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .7rem; margin-top: 1.1rem; }

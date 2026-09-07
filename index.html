@@ -13,7 +13,7 @@
   <header class="site-header">
     <a href="#top" class="brand">햇살가계부 <span>우리 집 태양광 절감 효과 미리 보기</span></a>
     <nav class="site-nav" aria-label="화면 바로가기">
-      <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#replay">월별 계산</a><a href="#evidence">계산 근거</a>
+      <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#evidence">계산 근거</a>
       <span class="header-note"><i aria-hidden="true"></i>동작형 웹 시제품</span>
     </nav>
   </header>
@@ -110,21 +110,19 @@
         </article>
       </section>
 
-      <section id="replay" class="screen section-shell pale" aria-labelledby="replay-title">
-        <div class="section-heading"><div><p class="eyebrow">3. 지난 1년 월별 계산</p><h2 id="replay-title">우리 집 전기 사용과<br>태양광을 겹쳐 봤어요</h2></div><p id="period-label"></p></div>
-        <article class="plain-result"><div><p class="mini-label">먼저 결과부터</p><h3>태양광이 우리 집 전기를 얼마나 채웠을까요?</h3></div><div class="energy-summary" id="energy-summary"></div></article>
-        <article class="energy-chart-card"><div class="card-heading"><div><p class="mini-label">월별 전기 흐름</p><h3 id="energy-chart-title">작년에 쓴 전기, 태양광이 어디까지 채울까요?</h3></div><span class="chart-legend"><i class="use-dot"></i>우리 집 사용 <i class="solar-dot"></i>태양광 예상</span></div><p class="chart-guide">노랑 막대가 회색보다 높으면, 그 달에는 전기가 남아 다음 달 계산으로 이어져요.</p><div id="energy-chart" class="energy-chart" role="img" aria-label="작년 월별 전기 사용량과 태양광 예상 발전량 비교"></div></article>
-        <article class="coverage-explainer" id="coverage-explainer"></article>
-        <div class="chart-grid">
-          <article class="chart-card"><div class="card-heading"><div><p class="mini-label">주소별 지난 날씨</p><h3>이 주소에는 언제 햇빛이 많았을까요?</h3></div><span class="chart-legend"><i class="solar-dot"></i>지난 햇빛</span></div><div id="sunlight-chart" class="bar-chart" role="img" aria-label="주소별 월간 일사량"></div></article>
-          <div class="flow-grid" id="flow-grid"></div>
-        </div>
-        <details class="numbers-details"><summary>계산값을 숫자로 보기</summary><div id="numbers-detail"></div></details>
-      </section>
-
       <section id="evidence" class="screen section-shell" aria-labelledby="evidence-title">
-        <div class="section-heading"><div><p class="eyebrow">4. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">3. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
         <div class="receipt-grid light" id="receipt-grid"></div>
+        <details class="numbers-details evidence-data-details">
+          <summary>월별 계산값과 날씨 자세히 보기</summary>
+          <p class="fine-print" id="period-label"></p>
+          <div id="numbers-detail"></div>
+          <div class="chart-grid">
+            <article class="chart-card"><div class="card-heading"><div><p class="mini-label">주소별 지난 날씨</p><h3>이 주소에는 언제 햇빛이 많았을까요?</h3></div><span class="chart-legend"><i class="solar-dot"></i>지난 햇빛</span></div><div id="sunlight-chart" class="bar-chart" role="img" aria-label="주소별 월간 일사량"></div></article>
+            <div class="flow-grid" id="flow-grid"></div>
+          </div>
+          <div class="monthly-table-wrap" id="monthly-detail"></div>
+        </details>
         <article class="limits-card">
           <p class="mini-label">실제와 달라질 수 있는 이유</p>
           <ul class="limits-list">
