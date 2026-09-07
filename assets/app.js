@@ -8,13 +8,50 @@ const searchForm = $("#location-search-form");
 const searchButton = $("button[type='submit']", searchForm);
 const searchStatus = $("#location-search-status");
 const locationResults = $("#location-results");
-const usesStaticServices = window.location.hostname.endsWith("github.io") || new URLSearchParams(window.location.search).has("static");
+const sampleButton = $("#sample-location");
+const progressSection = $("#progress");
+const progressTitle = $("#progress-title");
+const progressList = $("#progress-steps");
+const capacityTabs = $("#capacity-tabs");
+const localHosts = ["127.0.0.1", "localhost"];
+const usesStaticServices = new URLSearchParams(window.location.search).has("static")
+  || window.location.protocol === "file:"
+  || !localHosts.includes(window.location.hostname);
 const locationSearchCache = new Map();
+const demoDataUrls = ["data/demo.json", "../data/demo.json"];
+const progressStepLabels = ["주소 위치 확인", "지난해 시간별 날씨 분석", "3·4·5kW 전기요금 비교"];
 let baseDemoData = null;
+let currentData = null;
+let selectedCapacity = null;
 let lastLocationSearchAt = 0;
 
+function availableCapacities(data) {
+  return data.capacities.map((item) => item.capacity_kwp);
+}
+
+function activeCapacity(data) {
+  return availableCapacities(data).includes(selectedCapacity) ? selectedCapacity : data.recommendation.capacity_kwp;
+}
+
+function scenarioFor(data, capacityKwp) {
+  return data.capacities.find((item) => item.capacity_kwp === capacityKwp) || data.capacities[0];
+}
+
 function selectedScenario(data) {
-  return data.capacities.find((item) => item.capacity_kwp === data.recommendation.capacity_kwp) || data.capacities[0];
+  return scenarioFor(data, activeCapacity(data));
+}
+
+function renderProgress(activeIndex) {
+  progressSection.hidden = false;
+  progressTitle.textContent = activeIndex >= progressStepLabels.length
+    ? "계산 완료 — 먼저 살펴볼 용량을 찾았어요"
+    : "지난해 우리 집 위치를 계산하고 있어요";
+  progressList.innerHTML = progressStepLabels.map((label, index) => {
+    const state = index < activeIndex ? "is-done" : index === activeIndex ? "is-active" : "";
+    const icon = index < activeIndex ? "✓" : index === activeIndex ? "" : String(index + 1);
+    const status = index < activeIndex ? "완료" : index === activeIndex ? "확인 중…" : "대기";
+    return `<li class="progress-step ${state}"><span class="progress-icon" aria-hidden="true">${icon}</span><strong>${escapeHtml(label)}</strong><small>${status}</small></li>`;
+  }).join("");
 }
 
 const rounded = (value, digits = 0) => {
@@ -168,10 +205,77 @@ function renderEnergyBars(target, months) {
   }).join("");
 }
 
-function tierSentence(scenario, recommendation) {
+function tierSentence(scenario) {
   const month = scenario.months.find((item) => item.before.tier > item.after.tier);
-  if (!month) return "설치 전후의 요금 구간 변화를 월별로 다시 계산했어요.";
-  return `작년 ${monthLabel(month.month)}에는 ${month.before.tier}구간이었지만, ${recommendation.capacity_kwp}kW 태양광이 있었다면 ${month.after.tier}구간으로 예상돼요.`;
+  if (!month) return "설치 전후의 전기요금 단계 변화를 월별로 다시 계산했어요.";
+  if (month.after.tier === 0) {
+    return `작년 ${monthLabel(month.month)}에는 전기요금 ${month.before.tier}단계였지만, ${scenario.capacity_kwp}kW 태양광이 있었다면 단계 요금이 적용되지 않는 수준으로 예상돼요.`;
+  }
+  return `작년 ${monthLabel(month.month)}에는 전기요금 ${month.before.tier}단계였지만, ${scenario.capacity_kwp}kW 태양광이 있었다면 ${month.after.tier}단계로 예상돼요.`;
+}
+
+function renderSummary(data, recommendation) {
+  const recommended = scenarioFor(data, recommendation.capacity_kwp);
+  const recommendedAnnual = recommended.annual;
+  $("#summary-capacity").textContent = `${recommendation.capacity_kwp}kW`;
+  $("#summary-saved").textContent = won(recommendedAnnual.saved_won);
+  $("#summary-rate").textContent = `${number(recommendedAnnual.saved_won / recommendedAnnual.before_won * 100, 1)}%`;
+  $("#summary-before").textContent = won(recommendedAnnual.before_won);
+  $("#summary-reason").textContent = `${recommendation.reason} ${tierSentence(recommended)}`;
+  $("#sample-badge").textContent = data.input_summary.home_use.includes("시연용")
+    ? "시제품 계산 · 전기 사용량 샘플 적용 중"
+    : "입력한 전기 사용량 기준";
+  $("#result-cards").innerHTML = data.capacities.map((item) => {
+    const isRecommended = item.capacity_kwp === recommendation.capacity_kwp;
+    return `<div class="compare-item ${isRecommended ? "is-recommended" : ""}"><span>${item.capacity_kwp}kW${isRecommended ? " · 먼저 살펴볼 크기" : ""}</span><strong>연 ${won(item.annual.saved_won)}</strong></div>`;
+  }).join("");
+}
+
+function renderCapacityTabs(data) {
+  const active = activeCapacity(data);
+  capacityTabs.innerHTML = data.capacities.map((item) => {
+    const isActive = item.capacity_kwp === active;
+    const isRecommended = item.capacity_kwp === data.recommendation.capacity_kwp;
+    return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small>${isRecommended ? "먼저 살펴볼 크기" : "다른 크기 보기"}</small></button>`;
+  }).join("");
+  $("#capacity-panel").setAttribute("aria-labelledby", `capacity-tab-${active}`);
+}
+
+function renderCapacityMetrics(scenario) {
+  const annual = scenario.annual;
+  $("#capacity-metrics").innerHTML = [
+    {label:"지난 1년 예상 발전량", value:`${number(annual.solar_kwh)} kWh`},
+    {label:"설치 후 연간 전기요금", value:won(annual.after_won)},
+    {label:"연간 예상 절감액", value:won(annual.saved_won), tone:"is-saving"},
+    {label:"계산 기간 종료 후 남는 전기", value:`${number(annual.credit_at_period_end_kwh)} kWh`},
+  ].map((item) => `<div class="capacity-metric ${item.tone || ""}"><span>${escapeHtml(item.label)}</span><strong>${item.value}</strong></div>`).join("");
+}
+
+function renderDeltas(data) {
+  const sorted = [...data.capacities].sort((a, b) => a.capacity_kwp - b.capacity_kwp);
+  const steps = sorted.slice(1).map((item, index) => {
+    const previous = sorted[index];
+    const gap = item.capacity_kwp - previous.capacity_kwp;
+    return {
+      from: previous.capacity_kwp,
+      to: item.capacity_kwp,
+      perKw: (item.annual.saved_won - previous.annual.saved_won) / gap,
+      credit: item.annual.credit_at_period_end_kwh,
+    };
+  });
+  $("#capacity-deltas").innerHTML = steps.map((step) => `<div class="delta-item"><span>${step.from}kW → ${step.to}kW</span><strong>연 +${won(step.perKw)}</strong><small>용량 1kW가 늘 때 늘어나는 연 절감액</small></div>`).join("");
+  const last = steps[steps.length - 1];
+  $("#delta-note").textContent = last && last.perKw < steps[0].perKw
+    ? `${last.to}kW는 발전량은 늘지만 1kW당 추가 절감액이 ${won(last.perKw)}로 줄고, 계산 기간이 끝난 뒤 ${number(last.credit)}kWh가 남습니다. 그래서 ${data.recommendation.capacity_kwp}kW를 먼저 살펴볼 크기로 안내해요.`
+    : `용량을 올릴 때 늘어나는 연 절감액을 비교해 ${data.recommendation.capacity_kwp}kW를 먼저 살펴볼 크기로 안내해요.`;
+}
+
+function selectCapacity(capacityKwp) {
+  if (!currentData) return;
+  selectedCapacity = capacityKwp;
+  render(currentData);
+  const tab = $(`#capacity-tab-${capacityKwp}`);
+  if (tab) tab.focus();
 }
 
 function savingsBreakdown(data, scenario) {
@@ -192,17 +296,19 @@ function savingsBreakdown(data, scenario) {
 function renderSavingsBreakdown(data, scenario) {
   const breakdown = savingsBreakdown(data, scenario);
   const parts = [
-    {key:"base_energy_won", className:"base", label:"태양광으로 아낀 전기요금", note:"한전에서 덜 산 전기를 1구간 단가로 계산", color:"#f5c651"},
-    {key:"progressive_energy_won", className:"progressive", label:"높은 누진단가 회피", note:"2·3구간의 더 높은 전력량요금을 피한 효과", color:"#df8c35"},
-    {key:"basic_charge_won", className:"basic", label:"기본요금 구간 하락", note:`누진구간이 낮아진 ${scenario.annual.tier_drop_months}개월의 기본요금 차이`, color:"#2b795a"},
+    {key:"base_energy_won", className:"base", label:"태양광 전기를 사용해서 줄어든 금액", note:"한전에서 덜 산 전기를 1단계 단가로 계산", color:"#f5c651"},
+    {key:"progressive_energy_won", className:"progressive", label:"비싼 전기요금 단계에 들어가는 시기를 늦춘 효과", note:"2·3단계의 더 높은 전력량요금을 피한 금액", color:"#df8c35"},
+    {key:"basic_charge_won", className:"basic", label:"사용량이 낮아져 줄어든 기본요금", note:`전기요금 단계가 낮아진 ${scenario.annual.tier_drop_months}개월의 기본요금 차이`, color:"#2b795a"},
   ];
   $("#savings-total").textContent = `연 ${won(breakdown.total_won)} 절감`;
   $("#benefit-stack").innerHTML = parts.map((part) => `<span class="${part.className}" style="width:${Math.max(0, breakdown[part.key]) / Math.max(1, breakdown.total_won) * 100}%" title="${escapeHtml(part.label)} ${won(breakdown[part.key])}"></span>`).join("");
   $("#benefit-items").innerHTML = parts.map((part) => `<div class="benefit-item" style="--item-color:${part.color}"><span>${escapeHtml(part.label)}</span><strong>${won(breakdown[part.key])}</strong><small>${escapeHtml(part.note)}</small></div>`).join("");
-  $("#breakdown-note").textContent = "세 금액의 합이 위 총절감액입니다. 같은 효과를 다시 더하지 않았고, 한전에 보내고 남은 전기는 판매수익이 아니라 다음 달 전기사용량을 줄이는 것으로 계산했습니다.";
+  $("#breakdown-note").textContent = "세 금액의 합이 위 절감액입니다. 같은 효과를 다시 더하지 않았고, 한전에 보내고 남은 전기는 판매수익이 아니라 다음 달 전기사용량을 줄이는 것으로 계산했습니다.";
 }
 
 function render(data) {
+  currentData = data;
+  selectedCapacity = activeCapacity(data);
   const scenario = selectedScenario(data);
   const annual = scenario.annual;
   const recommendation = data.recommendation;
@@ -227,11 +333,13 @@ function render(data) {
     {label:"한전에서 계속 산 전기", value:`${number(gridPurchaseKwh)} kWh`, note:"태양광으로 채우고 남은 양", operator:"="},
   ].map((item, index) => `<div class="equation-part"><span class="equation-operator" aria-hidden="true">${item.operator}</span><article class="energy-summary-card ${index === 1 ? "is-highlight" : ""}"><span>${item.label}</span><strong>${item.value}</strong><small>${item.note}</small></article></div>`).join("");
   renderEnergyBars($("#energy-chart"), scenario.months);
-  $("#coverage-explainer").innerHTML = `<div class="coverage-lead"><p class="mini-label">그래프를 이렇게 읽어요</p><h3>태양광이 <em>${number(solarCoveredKwh)}kWh</em>를 채워,<br>우리 집 전기 사용의 ${number(solarCoveredPercent)}%가 달라져요.</h3><p>회색은 우리 집이 쓴 전기, 노랑은 이 위치에서 예상되는 태양광 전기예요. 노랑이 더 높은 달의 전기는 다음 달 계산으로 이어집니다.</p></div><div class="coverage-examples"><div><span class="example-icon">↗</span><p><strong>${monthLabel(largestCarryMonth.month)}에는 전기가 남아요</strong> 우리 집은 ${number(largestCarryMonth.home_use_kwh)}kWh를 썼고, 태양광과 앞달 전기를 합쳐 ${number(largestCarryMonth.credit_out_kwh)}kWh가 다음 달로 이어져요.</p></div><div><span class="example-icon">₩</span><p><strong>${monthLabel(tierExample.month)} 요금 구간도 낮아져요</strong> ${number(tierExample.home_use_kwh)}kWh 사용 중 태양광 ${number(tierExample.solar_kwh, 0)}kWh를 빼면 ${number(tierExample.net_metered_kwh, 0)}kWh가 남아요. ${tierExample.before.tier}구간에서 ${tierExample.after.tier}구간으로 계산돼요.</p></div></div>`;
+  $("#energy-chart-title").textContent = `${scenario.capacity_kwp}kW 태양광은 우리 집 전기를 어디까지 채울까요?`;
+  const afterTierTransition = tierExample.after.tier === 0 ? "단계 요금이 적용되지 않는 수준으로" : `${tierExample.after.tier}단계로`;
+  $("#coverage-explainer").innerHTML = `<div class="coverage-lead"><p class="mini-label">그래프를 이렇게 읽어요</p><h3>태양광이 <em>${number(solarCoveredKwh)}kWh</em>를 채워,<br>우리 집 전기 사용의 ${number(solarCoveredPercent)}%가 달라져요.</h3><p>회색은 우리 집이 쓴 전기, 노랑은 이 위치에서 예상되는 태양광 전기예요. 노랑이 더 높은 달의 전기는 다음 달 계산으로 이어집니다.</p></div><div class="coverage-examples"><div><span class="example-icon">↗</span><p><strong>${monthLabel(largestCarryMonth.month)}에는 전기가 남아요</strong> 우리 집은 ${number(largestCarryMonth.home_use_kwh)}kWh를 썼고, 태양광과 앞달 전기를 합쳐 ${number(largestCarryMonth.credit_out_kwh)}kWh가 다음 달로 이어져요.</p></div><div><span class="example-icon">₩</span><p><strong>${monthLabel(tierExample.month)} 요금 단계도 낮아져요</strong> ${number(tierExample.home_use_kwh)}kWh 사용 중 태양광 ${number(tierExample.solar_kwh, 0)}kWh를 빼면 ${number(tierExample.net_metered_kwh, 0)}kWh가 남아요. ${tierExample.before.tier}단계에서 ${afterTierTransition} 계산돼요.</p></div></div>`;
   $("#receipt-grid").innerHTML = [
     {value:`${number(receipt.weather_hours)}시간`, label:"검색 위치의 지난 날씨", note:`${receipt.weather_variables}을 ${receipt.weather_interval} 확인`},
     {value:"12개월", label:"우리 집 전기사용", note:`공식 ${receipt.ami_interval} AMI 원본 ${receipt.ami_sample_days}일을 참고한 시연용 샘플`},
-    {value:`${receipt.billing_months}번`, label:"공개 요금 기준 재계산", note:"남는 전기를 다음 달에 반영하고 누진 요금 구간도 함께 계산"},
+    {value:`${receipt.billing_months}번`, label:"공개 요금 기준 재계산", note:"남는 전기를 다음 달에 반영하고 전기요금 단계도 함께 계산"},
   ].map((item) => `<div><strong>${item.value}</strong><span>${item.label}</span><small>${item.note}</small></div>`).join("");
   $("#flow-grid").innerHTML = [
     {icon:"☀", label:"지난 햇빛", value:`${number(annualSunlight)} kWh/㎡`, note:"태양광 발전량 계산의 기준이에요"},
@@ -239,19 +347,17 @@ function render(data) {
     {icon:"☁", label:"평균 구름량", value:`${number(averageCloud)}%`, note:"같은 기간의 주소별 날씨예요"},
   ].map((card) => `<article class="flow-card"><span class="flow-icon" aria-hidden="true">${card.icon}</span><p>${card.label}</p><strong>${card.value}</strong><small>${card.note}</small></article>`).join("");
   renderBars($("#sunlight-chart"), data.monthly_sunlight, "sunlight_kwh_m2", null, "sunlight");
-  $("#bill-chart-title").textContent = `${recommendation.capacity_kwp}kW 설치 전후, 작년 우리 집 전기요금`;
+  $("#bill-chart-title").textContent = `${scenario.capacity_kwp}kW 설치 전후, 작년 우리 집 전기요금`;
   renderBars($("#bill-chart"), billMonths, "before_won", "after_won", "bill");
   $("#numbers-detail").innerHTML = `<div class="number-grid"><div><span>작년 우리 집 사용</span><strong>${number(annual.home_use_kwh)} kWh</strong></div><div><span>태양광이 채운 전기</span><strong>${number(solarCoveredKwh)} kWh</strong></div><div><span>한전에서 계속 산 전기</span><strong>${number(gridPurchaseKwh)} kWh</strong></div><div><span>작년 전기요금 기준</span><strong>${won(annual.before_won)}</strong></div><div><span>설치 후 예상</span><strong>${won(annual.after_won)}</strong></div><div><span>1년 예상 변화</span><strong>-${won(annual.saved_won)}</strong></div></div>`;
-  $("#recommendation").innerHTML = `<div><p>이번 우리 집에서는</p><h3>${recommendation.title}</h3><p>${recommendation.reason} ${tierSentence(scenario, recommendation)}</p></div><span class="recommendation-icon" aria-hidden="true">✓</span>`;
+  renderSummary(data, recommendation);
+  renderCapacityTabs(data);
+  renderCapacityMetrics(scenario);
+  renderDeltas(data);
   renderSavingsBreakdown(data, scenario);
-  $("#result-cards").innerHTML = data.capacities.map((item) => {
-    const isRecommended = item.capacity_kwp === recommendation.capacity_kwp;
-    const itemAnnual = item.annual;
-    return `<article class="result-card ${isRecommended ? "is-recommended" : ""}">${isRecommended ? '<span class="tag">먼저 살펴볼 크기</span>' : ""}<p class="mini-label">설치 크기</p><h3>${item.capacity_kwp}kW</h3><dl><dt>지난 1년 예상 발전량</dt><dd>${number(itemAnnual.solar_kwh)}<small> kWh</small></dd><dt>설치 후 예상 전기요금</dt><dd>${won(itemAnnual.after_won)}</dd><dt>작년보다 줄어드는 금액</dt><dd class="saving">-${won(itemAnnual.saved_won)}</dd></dl></article>`;
-  }).join("");
   $("#calculation-scope").textContent = data.calculation_scope;
   $("#basis-intro").textContent = data.demo_notice;
-  $("#basis-list").innerHTML = `<dt>우리 집 위치</dt><dd>${escapeHtml(data.input_summary.address)}</dd><dt>지난 날씨</dt><dd>${escapeHtml(data.input_summary.sunlight)}</dd><dt>전기 사용량</dt><dd>${escapeHtml(data.input_summary.home_use)}</dd><dt>요금 계산</dt><dd>${escapeHtml(data.input_summary.tariff)}</dd><dt>요금표</dt><dd>${escapeHtml(data.sources.tariff.label)} · 1·2·3구간 ${data.sources.tariff.rates_won_per_kwh.join(" / ")}원/kWh</dd>`;
+  $("#basis-list").innerHTML = `<dt>우리 집 위치</dt><dd>${escapeHtml(data.input_summary.address)}</dd><dt>지난 날씨</dt><dd>${escapeHtml(data.input_summary.sunlight)}</dd><dt>전기 사용량</dt><dd>${escapeHtml(data.input_summary.home_use)}</dd><dt>요금 계산</dt><dd>${escapeHtml(data.input_summary.tariff)}</dd><dt>요금표</dt><dd>${escapeHtml(data.sources.tariff.label)} · 1·2·3단계 ${data.sources.tariff.rates_won_per_kwh.join(" / ")}원/kWh</dd><dt>출처</dt><dd><a href="${escapeHtml(data.sources.tariff.source_url)}" target="_blank" rel="noreferrer">${escapeHtml(data.sources.tariff.source)}</a> · 지난 날씨 ${escapeHtml(data.sources.weather.provider)}</dd>`;
   $("#basis-note").textContent = data.actual_service_scope;
 }
 
@@ -305,25 +411,58 @@ async function previewLocation(result) {
 
 async function selectLocation(result, button) {
   searchButton.disabled = true;
+  if (sampleButton) sampleButton.disabled = true;
   locationResults.querySelectorAll("button").forEach((item) => { item.disabled = true; });
-  button.textContent = "이 위치의 지난 1년을 계산하고 있어요…";
-  searchStatus.textContent = "검색 위치의 지난해 날씨와 시연용 전기 사용량을 함께 계산하고 있어요…";
+  if (button) button.textContent = "이 위치의 지난 1년을 계산하고 있어요…";
+  searchStatus.textContent = "검색 위치의 지난해 날씨와 전기 사용량을 함께 계산하고 있어요…";
+  renderProgress(1);
   try {
     const data = await previewLocation(result);
+    renderProgress(2);
+    selectedCapacity = null;
     render(data);
+    renderProgress(progressStepLabels.length);
     locationResults.hidden = true;
     searchStatus.textContent = "계산이 끝났습니다. 아래에서 결과를 확인해 보세요.";
-    const replayTitle = $("#replay-title");
-    replayTitle.focus({preventScroll:true});
-    replayTitle.scrollIntoView({behavior:"smooth", block:"start"});
+    const resultTitle = $("#result-title");
+    resultTitle.focus({preventScroll:true});
+    resultTitle.scrollIntoView({behavior:"smooth", block:"start"});
   } catch (error) {
     searchStatus.textContent = error.message;
-    button.textContent = result.label;
+    progressSection.hidden = true;
+    if (button) button.textContent = result.label;
   } finally {
     searchButton.disabled = false;
+    if (sampleButton) sampleButton.disabled = false;
     locationResults.querySelectorAll("button").forEach((item) => { item.disabled = false; });
   }
 }
+
+capacityTabs.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-capacity]");
+  if (button) selectCapacity(Number(button.dataset.capacity));
+});
+
+capacityTabs.addEventListener("keydown", (event) => {
+  if (!currentData) return;
+  const capacities = availableCapacities(currentData);
+  const index = capacities.indexOf(activeCapacity(currentData));
+  const keys = {ArrowRight:1, ArrowDown:1, ArrowLeft:-1, ArrowUp:-1};
+  if (keys[event.key]) {
+    event.preventDefault();
+    selectCapacity(capacities[(index + keys[event.key] + capacities.length) % capacities.length]);
+  }
+  if (event.key === "Home") { event.preventDefault(); selectCapacity(capacities[0]); }
+  if (event.key === "End") { event.preventDefault(); selectCapacity(capacities[capacities.length - 1]); }
+});
+
+if (sampleButton) sampleButton.addEventListener("click", () => {
+  if (!baseDemoData) return;
+  const location = baseDemoData.location;
+  searchStatus.textContent = "예시 주소의 지난해 날씨를 다시 불러오고 있어요…";
+  renderProgress(0);
+  selectLocation({label:location.label, latitude:location.latitude, longitude:location.longitude}, null);
+});
 
 searchForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -332,10 +471,12 @@ searchForm.addEventListener("submit", async (event) => {
   locationResults.replaceChildren();
   searchButton.disabled = true;
   searchStatus.textContent = "검색할 위치를 확인하고 있어요…";
+  renderProgress(0);
   try {
     const data = await searchLocations(query);
     if (!data.results.length) {
       searchStatus.textContent = "검색 결과가 없습니다. 동·읍·면이나 가까운 장소 이름으로 다시 찾아보세요.";
+      progressSection.hidden = true;
       return;
     }
     data.results.forEach((result) => {
@@ -357,13 +498,25 @@ searchForm.addEventListener("submit", async (event) => {
     searchStatus.textContent = "같은 이름의 위치가 여러 곳이에요. 계산할 위치를 선택해 주세요.";
   } catch (error) {
     searchStatus.textContent = error.message;
+    progressSection.hidden = true;
   } finally {
     searchButton.disabled = false;
   }
 });
 
-fetch("data/demo.json")
-  .then((response) => { if (!response.ok) throw new Error("시연용 자료를 찾지 못했습니다."); return response.json(); })
+async function loadDemoData() {
+  for (const url of demoDataUrls) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return await response.json();
+    } catch (error) {
+      // 다음 경로로 계속 시도합니다.
+    }
+  }
+  throw new Error("시연용 자료를 찾지 못했습니다.");
+}
+
+loadDemoData()
   .then((data) => {
     baseDemoData = data;
     render(data);

@@ -13,7 +13,7 @@
   <header class="site-header">
     <a href="#top" class="brand">햇살가계부 <span>태양광 설치 전 미리 보기</span></a>
     <nav class="site-nav" aria-label="화면 바로가기">
-      <a href="#location">주소 검색</a><a href="#replay">계산 근거</a><a href="#result">결과 비교</a>
+      <a href="#location">주소 검색</a><a href="#result">최종 판단</a><a href="#replay">월별 계산</a><a href="#evidence">계산 근거</a>
       <span class="header-note"><i aria-hidden="true"></i>동작형 웹 시제품</span>
     </nav>
   </header>
@@ -22,10 +22,10 @@
     <div id="error" class="status-card error" role="alert" hidden></div>
     <div id="app" hidden>
       <section id="top" class="hero">
-        <p class="eyebrow">우리 집 위치의 태양광 발전량 예측으로 알아보는</p>
+        <p class="eyebrow">우리 집에 맞는 태양광 크기를 찾는 서비스</p>
         <h1>작년 우리 집에<br><em>태양광이 있었다면?</em></h1>
-        <p class="hero-copy">작년 우리 집에 비친 햇빛과 구름, 기온으로 태양광 발전량을 예측하고 전기 사용량과 겹쳐 봤어요. 태양광이 있었다면 전기요금이 얼마나 달라졌을지 바로 확인해 보세요.</p>
-        <div class="hero-steps" aria-label="서비스 이용 순서"><span>주소 검색</span><i aria-hidden="true">→</i><span>지난 날씨 분석</span><i aria-hidden="true">→</i><span>전기요금 비교</span></div>
+        <p class="hero-copy">작년 우리 집에 비친 햇빛과 구름, 기온으로 태양광 발전량을 예측하고 전기 사용량과 겹쳐 봤어요. 3·4·5kW 가운데 먼저 살펴볼 크기와 전기요금 변화를 함께 확인해 보세요.</p>
+        <div class="hero-steps" aria-label="서비스 이용 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>3·4·5kW 전기요금 비교</span></div>
         <a class="primary-link" href="#location">우리 집 위치로 계산해 보기 <span aria-hidden="true">↓</span></a>
         <p class="demo-notice" id="demo-notice"></p>
       </section>
@@ -37,6 +37,10 @@
             <label for="address-query">우리 집 위치 검색</label>
             <div class="address-search-row"><span class="pin" aria-hidden="true">⌖</span><input id="address-query" autocomplete="street-address" placeholder="동·읍·면, 도시 또는 주소를 입력하세요"><button type="submit">검색</button></div>
           </form>
+          <div class="sample-shortcut">
+            <button type="button" id="sample-location" class="ghost-button">예시 주소로 먼저 보기</button>
+            <span>예시 결과를 확인한 뒤 우리 집 주소로 다시 계산할 수 있어요.</span>
+          </div>
           <p class="privacy-note">검색어는 위치를 찾기 위해 외부 위치검색에 전송되며 이 시제품에 저장되지 않습니다.</p>
           <div id="location-search-status" class="search-status" role="status" aria-live="polite"></div>
           <div id="location-results" class="location-results" aria-label="위치 검색 결과" hidden></div>
@@ -45,39 +49,92 @@
         </article>
       </section>
 
-      <section id="replay" class="screen section-shell pale" aria-labelledby="replay-title">
-        <div class="section-heading"><div><p class="eyebrow">2. 지난 1년 계산 결과</p><h2 id="replay-title" tabindex="-1">우리 집 전기 사용과<br>태양광을 겹쳐 봤어요</h2></div><p id="period-label"></p></div>
-        <article class="plain-result"><div><p class="mini-label">먼저 결과부터</p><h3>태양광이 우리 집 전기를 얼마나 채웠을까요?</h3></div><div class="energy-summary" id="energy-summary"></div></article>
-        <article class="evidence-receipt"><div class="evidence-lead"><p class="mini-label">숫자만 보여드리지 않아요</p><h3>근거 있는 예측입니다.<br>이렇게 구했어요.</h3><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인하고 계산했어요.</p></div><div class="receipt-grid" id="receipt-grid"></div></article>
-        <details class="analysis-details" open>
-          <summary><span>월별 계산 과정 자세히 보기</span><small>햇빛·사용량·요금 변화를 월별로 확인할 수 있어요.</small></summary>
-          <div class="analysis-content">
-            <article class="energy-chart-card"><div class="card-heading"><div><p class="mini-label">월별 전기 흐름</p><h3>작년에 쓴 전기, 태양광이 어디까지 채울까요?</h3></div><span class="chart-legend"><i class="use-dot"></i>우리 집 사용 <i class="solar-dot"></i>태양광 예상</span></div><p class="chart-guide">노랑 막대가 회색보다 높으면, 그 달에는 전기가 남아 다음 달 계산으로 이어져요.</p><div id="energy-chart" class="energy-chart" role="img" aria-label="작년 월별 전기 사용량과 태양광 예상 발전량 비교"></div></article>
-            <article class="coverage-explainer" id="coverage-explainer"></article>
-            <div class="chart-grid">
-              <article class="chart-card"><div class="card-heading"><div><p class="mini-label">설치 전후 비교</p><h3 id="bill-chart-title">작년 전기요금은 어떻게 달라질까요?</h3></div><span class="chart-legend"><i class="before-dot"></i>설치 전 <i class="after-dot"></i>설치 후</span></div><div id="bill-chart" class="bar-chart bill-chart" role="img" aria-label="설치 전후 월별 전기요금 비교"></div></article>
-              <article class="chart-card"><div class="card-heading"><div><p class="mini-label">주소별 지난 날씨</p><h3>이 주소에는 언제 햇빛이 많았을까요?</h3></div><span class="chart-legend"><i class="solar-dot"></i>지난 햇빛</span></div><div id="sunlight-chart" class="bar-chart" role="img" aria-label="주소별 월간 일사량"></div></article>
-            </div>
-            <div class="flow-grid" id="flow-grid"></div>
-            <details class="numbers-details"><summary>계산값을 숫자로 보기</summary><div id="numbers-detail"></div></details>
-          </div>
-        </details>
+      <section id="progress" class="screen section-shell pale" aria-labelledby="progress-title" hidden>
+        <div class="section-heading"><div><p class="eyebrow">계산 중</p><h2 id="progress-title" tabindex="-1">지난해 우리 집 위치를 계산하고 있어요</h2></div><p>주소 위치 확인부터 3·4·5kW 요금 비교까지 순서대로 진행해요.</p></div>
+        <ol id="progress-steps" class="progress-steps"></ol>
       </section>
 
       <section id="result" class="screen section-shell" aria-labelledby="result-title">
-        <div class="section-heading"><div><p class="eyebrow">3. 한눈에 보는 최종 결과</p><h2 id="result-title">작년 전기요금,<br>이렇게 달라졌어요</h2></div><p>발전량·전기요금·누진구간을 설치 크기별로 한 번에 비교했어요.</p></div>
-        <article class="recommendation" id="recommendation"></article>
-        <article class="savings-breakdown">
-          <div class="savings-heading"><div><p class="mini-label">절감액이 커지는 이유</p><h3>태양광 전기와 누진구간 완화를 함께 계산했어요</h3></div><strong id="savings-total"></strong></div>
-          <div class="benefit-stack" id="benefit-stack" aria-label="연간 전기요금 절감액 구성"></div>
-          <div class="benefit-items" id="benefit-items"></div>
-          <p class="breakdown-note" id="breakdown-note"></p>
+        <div class="section-heading"><div><p class="eyebrow">2. 최종 판단</p><h2 id="result-title" tabindex="-1">우리 집에는<br>몇 kW가 가장 알맞을까요?</h2></div><p>설치 적합성을 확정하지 않고, 먼저 살펴볼 크기를 알려드려요.</p></div>
+
+        <article class="summary-card">
+          <div class="summary-lead">
+            <p class="mini-label">우리 집에서 먼저 살펴볼 용량</p>
+            <h3 id="summary-capacity"></h3>
+            <p id="summary-reason"></p>
+          </div>
+          <div class="summary-figures">
+            <div class="summary-figure">
+              <p>연간 예상 절감액</p>
+              <div class="summary-figure-row"><strong id="summary-saved"></strong><span class="inline-sample-badge" id="sample-badge"></span></div>
+            </div>
+            <div class="summary-figure-pair">
+              <div><p>설치 전 대비 절감률</p><strong id="summary-rate"></strong></div>
+              <div><p>설치 전 연간 전기요금</p><strong id="summary-before"></strong></div>
+            </div>
+          </div>
+          <div class="summary-compare">
+            <p class="mini-label">3·4·5kW 연 절감액</p>
+            <div class="result-cards" id="result-cards"></div>
+          </div>
+          <ul class="basis-chips">
+            <li>입력한 주소의 실제 지난해 날씨</li>
+            <li>공식 AMI 표본을 참고한 전기 사용 샘플</li>
+            <li>공개 주택용 전기요금 기준</li>
+          </ul>
         </article>
-        <div class="result-cards" id="result-cards"></div>
-        <aside class="money-note"><span aria-hidden="true">₩</span><div><strong>이 금액은 어떻게 계산했나요?</strong><p id="calculation-scope"></p></div></aside>
+
+        <article class="delta-card">
+          <div class="card-heading"><div><p class="mini-label">추천 이유 · 추가 1kW의 가치</p><h3>용량을 1kW 올릴 때 연 절감액이 얼마나 더 늘어나는지 비교했어요</h3></div></div>
+          <div class="delta-grid" id="capacity-deltas"></div>
+          <p class="breakdown-note" id="delta-note"></p>
+        </article>
+
+        <article class="capacity-explorer">
+          <div class="card-heading"><div><p class="mini-label">용량을 선택해 보세요</p><h3>선택한 용량의 발전량·전기요금·절감액을 함께 보여드려요</h3></div></div>
+          <div class="capacity-tabs" id="capacity-tabs" role="tablist" aria-label="설치 용량 선택"></div>
+          <div class="capacity-panel" id="capacity-panel" role="tabpanel" tabindex="0">
+            <div class="capacity-metrics" id="capacity-metrics"></div>
+            <div class="chart-card">
+              <div class="card-heading"><div><p class="mini-label">설치 전후 비교</p><h3 id="bill-chart-title">작년 전기요금은 어떻게 달라질까요?</h3></div><span class="chart-legend"><i class="before-dot"></i>설치 전 <i class="after-dot"></i>설치 후</span></div>
+              <div id="bill-chart" class="bar-chart bill-chart" role="img" aria-label="설치 전후 월별 전기요금 비교"></div>
+            </div>
+            <div class="savings-breakdown">
+              <div class="savings-heading"><div><p class="mini-label">절감액이 커지는 이유</p><h3>태양광 전기와 전기요금 단계 변화를 함께 계산했어요</h3></div><strong id="savings-total"></strong></div>
+              <div class="benefit-stack" id="benefit-stack" aria-label="연간 전기요금 절감액 구성"></div>
+              <div class="benefit-items" id="benefit-items"></div>
+              <p class="breakdown-note" id="breakdown-note"></p>
+            </div>
+          </div>
+        </article>
       </section>
 
-      <section class="screen section-shell basis" aria-labelledby="basis-title"><details><summary id="basis-title">계산 기준 보기</summary><div class="basis-content"><p id="basis-intro"></p><dl id="basis-list"></dl><p class="fine-print" id="basis-note"></p></div></details></section>
+      <section id="replay" class="screen section-shell pale" aria-labelledby="replay-title">
+        <div class="section-heading"><div><p class="eyebrow">3. 지난 1년 월별 계산</p><h2 id="replay-title">우리 집 전기 사용과<br>태양광을 겹쳐 봤어요</h2></div><p id="period-label"></p></div>
+        <article class="plain-result"><div><p class="mini-label">먼저 결과부터</p><h3>태양광이 우리 집 전기를 얼마나 채웠을까요?</h3></div><div class="energy-summary" id="energy-summary"></div></article>
+        <article class="energy-chart-card"><div class="card-heading"><div><p class="mini-label">월별 전기 흐름</p><h3 id="energy-chart-title">작년에 쓴 전기, 태양광이 어디까지 채울까요?</h3></div><span class="chart-legend"><i class="use-dot"></i>우리 집 사용 <i class="solar-dot"></i>태양광 예상</span></div><p class="chart-guide">노랑 막대가 회색보다 높으면, 그 달에는 전기가 남아 다음 달 계산으로 이어져요.</p><div id="energy-chart" class="energy-chart" role="img" aria-label="작년 월별 전기 사용량과 태양광 예상 발전량 비교"></div></article>
+        <article class="coverage-explainer" id="coverage-explainer"></article>
+        <div class="chart-grid">
+          <article class="chart-card"><div class="card-heading"><div><p class="mini-label">주소별 지난 날씨</p><h3>이 주소에는 언제 햇빛이 많았을까요?</h3></div><span class="chart-legend"><i class="solar-dot"></i>지난 햇빛</span></div><div id="sunlight-chart" class="bar-chart" role="img" aria-label="주소별 월간 일사량"></div></article>
+          <div class="flow-grid" id="flow-grid"></div>
+        </div>
+        <details class="numbers-details"><summary>계산값을 숫자로 보기</summary><div id="numbers-detail"></div></details>
+      </section>
+
+      <section id="evidence" class="screen section-shell" aria-labelledby="evidence-title">
+        <div class="section-heading"><div><p class="eyebrow">4. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
+        <div class="receipt-grid light" id="receipt-grid"></div>
+        <article class="limits-card">
+          <p class="mini-label">실제와 달라질 수 있는 이유</p>
+          <ul class="limits-list">
+            <li>지붕 방향과 주변 건물·나무의 그늘은 반영하지 않았습니다.</li>
+            <li>실제 검침일과 개별 할인은 반영하지 않았습니다.</li>
+            <li>현재 전기 사용량은 실제 고객 기록이 아닌 샘플입니다.</li>
+          </ul>
+        </article>
+        <aside class="money-note"><span aria-hidden="true">₩</span><div><strong>이 금액은 어떻게 계산했나요?</strong><p id="calculation-scope"></p></div></aside>
+        <details class="basis-details"><summary id="basis-title">계산 기준 보기</summary><div class="basis-content"><p id="basis-intro"></p><dl id="basis-list"></dl><p class="fine-print" id="basis-note"></p></div></details>
+      </section>
     </div>
   </main>
   <footer><strong>햇살가계부 동작형 웹 시제품</strong><span>실제 고객 데이터와 실제 청구서를 사용하지 않습니다.</span></footer>
