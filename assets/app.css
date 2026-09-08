@@ -387,7 +387,13 @@ footer strong { color: var(--ink-soft); }
 .capacity-explorer { margin-top: 1rem; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid #b9d0b8; border-radius: 23px; background: var(--paper); box-shadow: 0 10px 24px rgba(31, 87, 60, .06); }
 .capacity-tabs { --selector-position: 50%; position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 1rem; padding: 4.4rem 0 0; background: transparent; }
 .capacity-tabs::before { content: ""; position: absolute; top: 1.25rem; right: 0; left: 0; height: .62rem; border-radius: 999px; background: linear-gradient(90deg, var(--sun) 0%, var(--green-700) var(--selector-position), #e8eee5 var(--selector-position), #e8eee5 100%); }
-.capacity-tabs::after { content: ""; position: absolute; top: .46rem; left: var(--selector-position); width: 2.25rem; height: 2.25rem; transform: translateX(-50%); border: .34rem solid var(--paper); border-radius: 50%; background: var(--green-700); box-shadow: 0 8px 18px rgba(18, 72, 52, .24); transition: left .24s ease; pointer-events: none; }
+.capacity-range { position: absolute; z-index: 3; top: .46rem; left: calc(100% / 6); width: calc(100% * 2 / 3); height: 2.25rem; margin: 0; appearance: none; -webkit-appearance: none; cursor: grab; background: transparent; }
+.capacity-range:active { cursor: grabbing; }
+.capacity-range::-webkit-slider-runnable-track { height: .62rem; border-radius: 999px; background: transparent; }
+.capacity-range::-webkit-slider-thumb { width: 2.25rem; height: 2.25rem; margin-top: -.815rem; border: .34rem solid var(--paper); border-radius: 50%; appearance: none; -webkit-appearance: none; background: var(--green-700); box-shadow: 0 8px 18px rgba(18, 72, 52, .24); }
+.capacity-range::-moz-range-track { height: .62rem; border: 0; border-radius: 999px; background: transparent; }
+.capacity-range::-moz-range-thumb { width: 1.57rem; height: 1.57rem; border: .34rem solid var(--paper); border-radius: 50%; background: var(--green-700); box-shadow: 0 8px 18px rgba(18, 72, 52, .24); }
+.capacity-range:focus-visible { outline: 3px solid #d8a713; outline-offset: 4px; border-radius: 999px; }
 .capacity-tab { position: relative; z-index: 1; display: grid; min-width: 0; min-height: 3.7rem; place-content: start center; gap: .12rem; padding: .35rem .45rem; border: 0; border-radius: 14px; color: var(--muted); background: transparent; font: inherit; cursor: pointer; transition: color .18s ease, background .18s ease; }
 .capacity-tab strong { font-size: 1.3rem; font-weight: 850; letter-spacing: -.055em; }
 .capacity-tab small { min-height: 1em; color: var(--muted); font-size: .72rem; font-weight: 800; }

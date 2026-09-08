@@ -227,17 +227,30 @@ function renderSummary(data, recommendation) {
   }).join("");
 }
 
-function renderCapacityTabs(data) {
+function syncCapacityControls(data) {
   const active = activeCapacity(data);
   const capacities = availableCapacities(data);
   const activeIndex = capacities.indexOf(active);
   capacityTabs.style.setProperty("--selector-position", `${(activeIndex + 0.5) / capacities.length * 100}%`);
+  const range = $("#capacity-range", capacityTabs);
+  if (range) range.value = String(activeIndex);
+  capacityTabs.querySelectorAll(".capacity-tab").forEach((button) => {
+    const isActive = Number(button.dataset.capacity) === active;
+    button.setAttribute("aria-selected", String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
+  });
+  $("#capacity-panel").setAttribute("aria-labelledby", `capacity-tab-${active}`);
+}
+
+function renderCapacityTabs(data) {
+  const active = activeCapacity(data);
+  const capacities = availableCapacities(data);
   capacityTabs.innerHTML = data.capacities.map((item) => {
     const isActive = item.capacity_kwp === active;
     const isRecommended = item.capacity_kwp === data.recommendation.capacity_kwp;
     return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small aria-hidden="true">${isRecommended ? "추천" : "&nbsp;"}</small></button>`;
-  }).join("");
-  $("#capacity-panel").setAttribute("aria-labelledby", `capacity-tab-${active}`);
+  }).join("") + `<input type="range" class="capacity-range" id="capacity-range" min="0" max="${capacities.length - 1}" step="1" value="${capacities.indexOf(active)}" aria-label="태양광 설치 용량 선택">`;
+  syncCapacityControls(data);
 }
 
 function renderCapacityMetrics(scenario) {
@@ -305,7 +318,7 @@ function renderSavingsBreakdown(data, scenario) {
   $("#breakdown-note").textContent = "세 금액의 합이 위 절감액입니다. 같은 효과를 다시 더하지 않았고, 한전에 보내고 남은 전기는 판매수익이 아니라 다음 달 전기사용량을 줄이는 것으로 계산했습니다.";
 }
 
-function render(data) {
+function render(data, options = {}) {
   currentData = data;
   selectedCapacity = activeCapacity(data);
   const scenario = selectedScenario(data);
@@ -340,7 +353,8 @@ function render(data) {
   $("#monthly-detail").innerHTML = `<table><caption>${scenario.capacity_kwp}kW 설치 가정 월별 계산값</caption><thead><tr><th>월</th><th>전기 사용</th><th>예상 발전</th><th>설치 전 요금</th><th>설치 후 요금</th><th>예상 절감</th></tr></thead><tbody>${scenario.months.map((item) => `<tr><th>${monthLabel(item.month)}</th><td>${number(item.home_use_kwh)} kWh</td><td>${number(item.solar_kwh)} kWh</td><td>${won(item.before.total_won)}</td><td>${won(item.after.total_won)}</td><td>${won(item.saved_won)}</td></tr>`).join("")}</tbody></table>`;
   renderHero(data, recommendation);
   renderSummary(data, recommendation);
-  renderCapacityTabs(data);
+  if (options.reuseCapacityControls) syncCapacityControls(data);
+  else renderCapacityTabs(data);
   renderCapacityMetrics(scenario);
   renderDeltas(data);
   renderSavingsBreakdown(data, scenario);
@@ -432,8 +446,16 @@ capacityTabs.addEventListener("click", (event) => {
   if (button) selectCapacity(Number(button.dataset.capacity));
 });
 
+capacityTabs.addEventListener("input", (event) => {
+  if (!currentData || !event.target.matches(".capacity-range")) return;
+  const capacities = availableCapacities(currentData);
+  selectedCapacity = capacities[Number(event.target.value)];
+  render(currentData, {reuseCapacityControls:true});
+});
+
 capacityTabs.addEventListener("keydown", (event) => {
   if (!currentData) return;
+  if (event.target.matches(".capacity-range")) return;
   const capacities = availableCapacities(currentData);
   const index = capacities.indexOf(activeCapacity(currentData));
   const keys = {ArrowRight:1, ArrowDown:1, ArrowLeft:-1, ArrowUp:-1};
