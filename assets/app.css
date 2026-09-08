@@ -404,6 +404,8 @@ footer strong { color: var(--ink-soft); }
 .capacity-panel { margin-top: 1.3rem; }
 .capacity-panel > * + * { margin-top: 1.1rem; }
 .capacity-panel .savings-breakdown, .capacity-panel .chart-card { margin-top: 1.1rem; }
+.capacity-panel .energy-flow-detail { margin-top: 1.1rem; }
+.energy-flow-detail .energy-chart-card { margin-top: 0; }
 .capacity-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .7rem; }
 .capacity-metric { padding: 1rem; border: 1px solid #cbdcc7; border-radius: 16px; background: #f8fbf6; }
 .capacity-metric span { display: block; color: var(--muted); font-size: .76rem; }

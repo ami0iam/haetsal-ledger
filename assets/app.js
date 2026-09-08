@@ -192,6 +192,16 @@ function renderBars(target, items, firstKey, secondKey, type) {
   }).join("");
 }
 
+function renderEnergyBars(target, months) {
+  const maximum = Math.max(...months.flatMap((item) => [item.home_use_kwh, item.solar_kwh]), 1);
+  target.innerHTML = months.map((item) => {
+    const useHeight = Math.max(3, item.home_use_kwh / maximum * 100);
+    const solarHeight = Math.max(3, item.solar_kwh / maximum * 100);
+    const isSurplus = item.credit_out_kwh > 0.1;
+    return `<div class="energy-month ${isSurplus ? "is-surplus" : ""}" title="${monthLabel(item.month)}: 우리 집 사용 ${number(item.home_use_kwh, 1)}kWh, 태양광 예상 ${number(item.solar_kwh, 1)}kWh"><div class="energy-pair"><i class="energy-use" style="height:${useHeight}%"></i><i class="energy-solar" style="height:${solarHeight}%"></i></div><small>${monthLabel(item.month)}</small></div>`;
+  }).join("");
+}
+
 function tierSentence(scenario) {
   const month = scenario.months.find((item) => item.before.tier > item.after.tier);
   if (!month) return "설치 전후의 전기요금 단계 변화를 월별로 다시 계산했어요.";
@@ -328,6 +338,11 @@ function render(data, options = {}) {
   const receipt = data.data_receipt;
   const gridPurchaseKwh = annual.home_use_kwh - annual.solar_kwh + annual.credit_at_period_end_kwh;
   const solarCoveredKwh = annual.home_use_kwh - gridPurchaseKwh;
+  const solarCoveredPercent = solarCoveredKwh / annual.home_use_kwh * 100;
+  const largestCarryMonth = scenario.months.reduce((best, item) => item.credit_out_kwh > best.credit_out_kwh ? item : best, scenario.months[0]);
+  const tierExample = scenario.months.find((item) => item.month === recommendation.highlight_month)
+    || scenario.months.find((item) => item.before.tier > item.after.tier)
+    || scenario.months[0];
   const annualSunlight = data.monthly_sunlight.reduce((total, item) => total + item.sunlight_kwh_m2, 0);
   const averageTemperature = data.monthly_sunlight.reduce((total, item) => total + item.average_temperature_c, 0) / data.monthly_sunlight.length;
   const averageCloud = data.monthly_sunlight.reduce((total, item) => total + item.average_cloud_cover_percent, 0) / data.monthly_sunlight.length;
@@ -349,6 +364,10 @@ function render(data, options = {}) {
   renderBars($("#sunlight-chart"), data.monthly_sunlight, "sunlight_kwh_m2", null, "sunlight");
   $("#bill-chart-title").textContent = `${scenario.capacity_kwp}kW 설치 전후, 작년 우리 집 전기요금`;
   renderBars($("#bill-chart"), billMonths, "before_won", "after_won", "bill");
+  renderEnergyBars($("#energy-chart"), scenario.months);
+  $("#energy-chart-title").textContent = `${scenario.capacity_kwp}kW 태양광은 우리 집 전기를 어디까지 채울까요?`;
+  const afterTierTransition = tierExample.after.tier === 0 ? "단계 요금이 적용되지 않는 수준으로" : `${tierExample.after.tier}단계로`;
+  $("#coverage-explainer").innerHTML = `<div class="coverage-lead"><p class="mini-label">그래프를 이렇게 읽어요</p><h3>태양광이 <em>${number(solarCoveredKwh)}kWh</em>를 채워,<br>우리 집 전기 사용의 ${number(solarCoveredPercent)}%가 달라져요.</h3><p>회색은 우리 집이 쓴 전기, 노랑은 이 위치에서 예상되는 태양광 전기예요. 노랑이 더 높은 달의 전기는 다음 달 계산으로 이어집니다.</p></div><div class="coverage-examples"><div><span class="example-icon">↗</span><p><strong>${monthLabel(largestCarryMonth.month)}에는 전기가 남아요</strong> 우리 집은 ${number(largestCarryMonth.home_use_kwh)}kWh를 썼고, 태양광과 앞달 전기를 합쳐 ${number(largestCarryMonth.credit_out_kwh)}kWh가 다음 달로 이어져요.</p></div><div><span class="example-icon">₩</span><p><strong>${monthLabel(tierExample.month)} 요금 단계도 낮아져요</strong> ${number(tierExample.home_use_kwh)}kWh 사용 중 태양광 ${number(tierExample.solar_kwh)}kWh를 빼면 ${number(tierExample.net_metered_kwh)}kWh가 남아, ${tierExample.before.tier}단계에서 ${afterTierTransition} 계산돼요.</p></div></div>`;
   $("#numbers-detail").innerHTML = `<div class="number-grid"><div><span>작년 우리 집 사용</span><strong>${number(annual.home_use_kwh)} kWh</strong></div><div><span>태양광이 채운 전기</span><strong>${number(solarCoveredKwh)} kWh</strong></div><div><span>한전에서 계속 산 전기</span><strong>${number(gridPurchaseKwh)} kWh</strong></div><div><span>작년 전기요금 기준</span><strong>${won(annual.before_won)}</strong></div><div><span>설치 후 예상</span><strong>${won(annual.after_won)}</strong></div><div><span>1년 예상 절감</span><strong>${won(annual.saved_won)}</strong></div></div>`;
   $("#monthly-detail").innerHTML = `<table><caption>${scenario.capacity_kwp}kW 설치 가정 월별 계산값</caption><thead><tr><th>월</th><th>전기 사용</th><th>예상 발전</th><th>설치 전 요금</th><th>설치 후 요금</th><th>예상 절감</th></tr></thead><tbody>${scenario.months.map((item) => `<tr><th>${monthLabel(item.month)}</th><td>${number(item.home_use_kwh)} kWh</td><td>${number(item.solar_kwh)} kWh</td><td>${won(item.before.total_won)}</td><td>${won(item.after.total_won)}</td><td>${won(item.saved_won)}</td></tr>`).join("")}</tbody></table>`;
   renderHero(data, recommendation);
