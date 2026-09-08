@@ -229,10 +229,13 @@ function renderSummary(data, recommendation) {
 
 function renderCapacityTabs(data) {
   const active = activeCapacity(data);
+  const capacities = availableCapacities(data);
+  const activeIndex = capacities.indexOf(active);
+  capacityTabs.style.setProperty("--selector-position", `${(activeIndex + 0.5) / capacities.length * 100}%`);
   capacityTabs.innerHTML = data.capacities.map((item) => {
     const isActive = item.capacity_kwp === active;
     const isRecommended = item.capacity_kwp === data.recommendation.capacity_kwp;
-    return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small>${isRecommended ? "절감 효율 균형" : "절감액 비교"}</small></button>`;
+    return `<button type="button" class="capacity-tab" role="tab" id="capacity-tab-${item.capacity_kwp}" aria-selected="${isActive}" aria-controls="capacity-panel" tabindex="${isActive ? 0 : -1}" data-capacity="${item.capacity_kwp}"><strong>${item.capacity_kwp}kW</strong><small aria-hidden="true">${isRecommended ? "추천" : "&nbsp;"}</small></button>`;
   }).join("");
   $("#capacity-panel").setAttribute("aria-labelledby", `capacity-tab-${active}`);
 }

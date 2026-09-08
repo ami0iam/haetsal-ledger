@@ -385,13 +385,16 @@ footer strong { color: var(--ink-soft); }
 .delta-item small { margin-top: .35rem; color: var(--muted); font-size: .74rem; line-height: 1.5; }
 
 .capacity-explorer { margin-top: 1rem; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid #b9d0b8; border-radius: 23px; background: var(--paper); box-shadow: 0 10px 24px rgba(31, 87, 60, .06); }
-.capacity-tabs { display: flex; gap: .4rem; margin-top: 1rem; padding: .35rem; border-radius: 999px; background: #f0f5ee; flex-wrap: wrap; }
-.capacity-tab { display: grid; flex: 1; min-width: 6.5rem; min-height: 2.85rem; place-items: center; gap: .1rem; padding: .55rem .9rem; border: 0; border-radius: 999px; color: var(--ink-soft); background: transparent; font: inherit; cursor: pointer; transition: background .18s ease, color .18s ease; }
-.capacity-tab strong { font-size: .95rem; font-weight: 850; letter-spacing: -.04em; }
-.capacity-tab small { color: var(--muted); font-size: .68rem; font-weight: 750; }
-.capacity-tab:hover:not([aria-selected="true"]) { background: #e5eee2; }
-.capacity-tab[aria-selected="true"] { color: var(--paper); background: var(--green-700); box-shadow: 0 6px 14px rgba(18, 72, 52, .16); }
-.capacity-tab[aria-selected="true"] small { color: #d8e7d8; }
+.capacity-tabs { --selector-position: 50%; position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 1rem; padding: 4.4rem 0 0; background: transparent; }
+.capacity-tabs::before { content: ""; position: absolute; top: 1.25rem; right: 0; left: 0; height: .62rem; border-radius: 999px; background: linear-gradient(90deg, var(--sun) 0%, var(--green-700) var(--selector-position), #e8eee5 var(--selector-position), #e8eee5 100%); }
+.capacity-tabs::after { content: ""; position: absolute; top: .46rem; left: var(--selector-position); width: 2.25rem; height: 2.25rem; transform: translateX(-50%); border: .34rem solid var(--paper); border-radius: 50%; background: var(--green-700); box-shadow: 0 8px 18px rgba(18, 72, 52, .24); transition: left .24s ease; pointer-events: none; }
+.capacity-tab { position: relative; z-index: 1; display: grid; min-width: 0; min-height: 3.7rem; place-content: start center; gap: .12rem; padding: .35rem .45rem; border: 0; border-radius: 14px; color: var(--muted); background: transparent; font: inherit; cursor: pointer; transition: color .18s ease, background .18s ease; }
+.capacity-tab strong { font-size: 1.3rem; font-weight: 850; letter-spacing: -.055em; }
+.capacity-tab small { min-height: 1em; color: var(--muted); font-size: .72rem; font-weight: 800; }
+.capacity-tab:hover { background: #f2f6f0; color: var(--green-700); }
+.capacity-tab[aria-selected="true"] { color: var(--ink); }
+.capacity-tab[aria-selected="true"] strong { color: var(--ink); }
+.capacity-tab[aria-selected="true"] small { color: var(--green-700); }
 .capacity-panel { margin-top: 1.3rem; }
 .capacity-panel > * + * { margin-top: 1.1rem; }
 .capacity-panel .savings-breakdown, .capacity-panel .chart-card { margin-top: 1.1rem; }
@@ -447,6 +450,8 @@ footer strong { color: var(--ink-soft); }
   .hero-steps-light { align-items: stretch; flex-direction: column; width: fit-content; gap: .28rem; }
   .hero-steps-light i { display: none; }
   .summary-figure-pair { gap: 1rem; }
-  .capacity-tab { min-width: 100%; }
+  .capacity-tabs { padding-top: 3.9rem; }
+  .capacity-tab { min-width: 0; padding-inline: .2rem; }
+  .capacity-tab strong { font-size: 1.05rem; }
   .capacity-metrics, .delta-grid, .summary-compare .result-cards { grid-template-columns: 1fr; }
 }
