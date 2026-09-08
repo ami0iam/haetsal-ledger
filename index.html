@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="우리 집 위치의 지난해 날씨와 AMI 표본 기반 전기 사용 샘플로 태양광 설치 시 예상 전기요금 절감 효과를 계산하는 동작형 웹 시제품">
+  <meta name="description" content="우리집 지붕에 지난 1년 동안 떨어진 햇살이 전기요금으로 얼마인지 주소별 날씨와 AMI 사용 이력으로 계산하는 동작형 웹 시제품">
   <meta name="theme-color" content="#124834">
-  <title>햇살가계부 · 우리 집 태양광 미리 보기</title>
+  <title>햇살가계부 · 우리집 햇살은 1년에 얼마일까?</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%23f5c651'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23124834'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
   <header class="site-header">
-    <a href="#top" class="brand">햇살가계부 <span>우리 집 태양광 절감 효과 미리 보기</span></a>
+    <a href="#top" class="brand">햇살가계부 <span>우리집 햇살 가치 미리보기</span></a>
     <nav class="site-nav" aria-label="화면 바로가기">
       <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#capacity">용량별 비교</a><a href="#evidence">계산 근거</a>
       <span class="header-note"><i aria-hidden="true"></i>동작형 웹 시제품</span>
@@ -24,31 +24,36 @@
       <section id="top" class="hero-lead">
         <div class="hero-lead-grid">
           <div>
-            <p class="hero-eyebrow">이미 지나간 작년 전기요금</p>
-            <h1>작년에 태양광이 있었다면,<br><em>내지 않아도 됐을 돈</em></h1>
-            <p class="hero-copy">태양광을 생각해 본 적 없어도 괜찮아요. 주소만 넣으면 우리 집 위치의 지난해 날씨로, 태양광이 있었다면 작년 전기요금이 얼마나 줄었을지 계산해 드려요.</p>
-            <a class="primary-link solid" href="#location">우리 집은 얼마였는지 보기 <span aria-hidden="true">↓</span></a>
+            <p class="hero-eyebrow">매년 우리집에 무료로 도착하는 에너지</p>
+            <h1>우리집 햇살은<br><em>1년에 얼마일까?</em></h1>
+            <p class="hero-copy">우리집 지붕에 1년 동안 떨어진 햇살이 전기요금으로 얼마인지 계산해 드려요. 주소만 넣으면 지난 1년 날씨를 불러와, 태양광이 있었다면 아꼈을 금액을 원 단위로 보여줍니다.</p>
+            <a class="primary-link solid" href="#location">우리집 햇살 가치 확인하기 <span aria-hidden="true">↓</span></a>
           </div>
           <aside class="hero-loss-card">
-            <p class="hero-loss-label">현재 시연 예시 · <span id="hero-capacity"></span> 설치 가정</p>
-            <p class="hero-loss-lead">작년 한 해, 태양광이 있었다면<br>아낄 수 있었던 전기요금</p>
+            <p class="hero-loss-label"><span id="hero-context">현재 시연 예시</span> · <span id="hero-capacity"></span> 설치 가정</p>
+            <p class="hero-loss-lead">지난 1년, 이 위치의 햇살이<br>전기요금으로 만든 예상 가치</p>
             <strong class="hero-loss-value" id="hero-missed"></strong>
             <div class="hero-loss-figures">
               <div><span>월평균 절감</span><strong id="hero-monthly"></strong></div>
               <div><span>작년 요금 대비</span><strong id="hero-rate"></strong></div>
             </div>
-            <p class="hero-loss-note">위치의 지난해 날씨와 AMI 표본 기반 전기 사용 샘플, 공개 주택용 전기요금 기준으로 계산했어요.</p>
+            <p class="hero-loss-note">위치의 지난해 날씨와 AMI 표본 기반 전기 사용 샘플, 공개 주택용 전기요금 기준으로 계산한 절감 효과예요.</p>
           </aside>
         </div>
-        <div class="hero-steps-light" aria-label="계산 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>작년 전기요금 다시 계산</span></div>
+        <div class="hero-steps-light" aria-label="계산 순서"><span>우리집 주소 확인</span><i aria-hidden="true">→</i><span>8,760시간 햇빛·구름·기온 분석</span><i aria-hidden="true">→</i><span>햇살의 전기요금 가치 계산</span></div>
         <p class="demo-notice" id="demo-notice"></p>
       </section>
 
+      <section class="insight-band" aria-label="햇살가계부가 보여주는 새로운 관점">
+        <article><span class="insight-number">01</span><div><p class="mini-label">아무도 알려주지 않았던 숫자</p><h2>우리집 지붕 위로 1년 내내 쏟아진 햇빛이 돈으로 얼마인지는 아무도 알려주지 않았어요.</h2></div></article>
+        <article><span class="insight-number">02</span><div><p class="mini-label">평균이 아닌 우리집의 몫</p><h2>같은 지역, 같은 용량이라도 낮에 전기를 쓰는 시간과 요금 단계에 따라 우리집 햇살의 가치는 달라져요.</h2></div></article>
+      </section>
+
       <section id="location" class="screen section-shell" aria-labelledby="location-title">
-        <div class="section-heading"><div><p class="eyebrow">1. 우리 집 위치</p><h2 id="location-title">우리 집 주소에서<br>지난해 햇빛을 찾아요</h2></div><p>주소를 검색하면 그 위치의 지난해 날씨로 다시 계산해요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">1. 우리집 햇살 찾기</p><h2 id="location-title">주소만 넣으면<br>지난 1년 햇살을 불러와요</h2></div><p>해당 위치의 시간별 햇빛·구름·기온을 불러와 우리집의 숫자로 다시 계산해요.</p></div>
         <article class="address-card">
           <form id="location-search-form">
-            <label for="address-query">우리 집 위치 검색</label>
+            <label for="address-query">우리집 주소 검색</label>
             <div class="address-search-row"><span class="pin" aria-hidden="true">⌖</span><input id="address-query" autocomplete="street-address" placeholder="동·읍·면, 도시 또는 주소를 입력하세요"><button type="submit">검색</button></div>
           </form>
           <div class="sample-shortcut">
@@ -64,16 +69,16 @@
       </section>
 
       <section id="progress" class="screen section-shell pale" aria-labelledby="progress-title" hidden>
-        <div class="section-heading"><div><p class="eyebrow">계산 중</p><h2 id="progress-title" tabindex="-1">우리 집 태양광 절감 효과를 계산하고 있어요</h2></div><p>주소 위치 확인부터 설치 용량별 절감 효과 비교까지 순서대로 진행해요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">계산 중</p><h2 id="progress-title" tabindex="-1">우리집 지붕의 지난 1년 햇살 가치를 계산하고 있어요</h2></div><p>주소 확인부터 시간별 날씨 분석과 전기요금 계산까지 순서대로 진행해요.</p></div>
         <ol id="progress-steps" class="progress-steps"></ol>
       </section>
 
       <section id="result" class="screen section-shell" aria-labelledby="result-title">
-        <div class="section-heading"><div><p class="eyebrow">2. 예상 절감 효과</p><h2 id="result-title" tabindex="-1">우리 집에 태양광이 있었다면<br>얼마나 아낄 수 있었을까요?</h2></div><p>지난 1년을 기준으로 설치 용량별 전기요금 절감 효과를 비교해요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">2. 우리집 햇살의 가치</p><h2 id="result-title" tabindex="-1">지난 1년 우리집 햇살은<br>전기요금으로 얼마였을까요?</h2></div><p>같은 지역과 같은 용량이어도 사용 시간과 요금 단계에 따라 우리집 몫은 달라집니다.</p></div>
 
         <article class="summary-card">
           <div class="summary-lead">
-            <p class="mini-label">지난 1년 기준 예상 절감액</p>
+            <p class="mini-label">전기요금 절감 기준 · 우리집 햇살의 지난 1년 예상 가치</p>
             <h3 id="summary-saved"></h3>
             <p id="summary-reason"></p>
           </div>
@@ -108,9 +113,9 @@
       </section>
 
       <section id="capacity" class="screen section-shell pale capacity-section" aria-labelledby="capacity-title">
-        <div class="section-heading"><div><p class="eyebrow">3. 용량별로 자세히 보기</p><h2 id="capacity-title">용량을 바꿔 보면<br>결과가 어떻게 달라질까요?</h2></div><p>용량을 선택하면 발전량·요금·절감액과 월별 그래프가 함께 바뀝니다.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">3. 같은 햇살, 다른 우리집 몫</p><h2 id="capacity-title">용량을 바꾸면 우리집 햇살의 가치는<br>어떻게 달라질까요?</h2></div><p>용량을 선택하면 발전량·요금·절감액과 월별 그래프가 함께 바뀝니다.</p></div>
         <article class="capacity-explorer">
-          <div class="card-heading"><div><p class="mini-label">설치 용량별 예상 이익 비교</p><h3>용량을 바꿔 보며 전기요금 절감 효과를 비교해 보세요</h3></div></div>
+          <div class="card-heading"><div><p class="mini-label">우리집에서 얻을 수 있는 절감 효과</p><h3>3·4·5kW를 바꿔 보며 햇살이 만드는 전기요금 가치를 비교해 보세요</h3></div></div>
           <div class="capacity-tabs" id="capacity-tabs" role="tablist" aria-label="설치 용량 선택"></div>
           <div class="capacity-panel" id="capacity-panel" role="tabpanel" tabindex="0">
             <div class="capacity-metrics" id="capacity-metrics"></div>
@@ -137,7 +142,7 @@
       </section>
 
       <section id="evidence" class="screen section-shell" aria-labelledby="evidence-title">
-        <div class="section-heading"><div><p class="eyebrow">4. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">4. 8,760시간의 근거</p><h2 id="evidence-title">우리집 햇살의 가치는<br>이렇게 구했어요</h2></div><p>주소의 지난 1년 햇빛·구름·기온, AMI 사용 이력과 공개 요금 기준을 나눠 확인했어요.</p></div>
         <div class="receipt-grid light" id="receipt-grid"></div>
         <details class="numbers-details evidence-data-details">
           <summary>월별 계산값과 날씨 자세히 보기</summary>

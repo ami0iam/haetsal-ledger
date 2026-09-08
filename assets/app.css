@@ -446,6 +446,12 @@ footer strong { color: var(--ink-soft); }
 .hero-steps-light span { padding: .46rem .7rem; border: 1px solid #dbe6d6; border-radius: 999px; background: var(--paper); }
 .hero-steps-light i { color: #c9a227; font-style: normal; }
 .hero-lead .demo-notice { max-width: 38rem; margin: 1.1rem 0 0; color: var(--muted); }
+.insight-band { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin: 0 1.4rem 1.45rem; }
+.insight-band article { display: grid; grid-template-columns: auto 1fr; gap: 1rem; padding: clamp(1.15rem, 3vw, 1.55rem); border: 1px solid var(--line); border-radius: 22px; background: rgba(255, 254, 249, .82); }
+.insight-band article:first-child { border-color: #efdfa7; background: linear-gradient(130deg, #fffdf1, #fff9df); }
+.insight-number { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; color: var(--green-700); background: #dcebd8; font-size: .72rem; font-weight: 900; }
+.insight-band article:first-child .insight-number { color: #7c5c09; background: var(--sun-soft); }
+.insight-band h2 { margin: .35rem 0 0; font-size: clamp(1rem, 2.2vw, 1.32rem); line-height: 1.45; letter-spacing: -.045em; word-break: keep-all; }
 .capacity-section .capacity-explorer { margin-top: 0; }
 
 @media (max-width: 860px) {
@@ -457,6 +463,7 @@ footer strong { color: var(--ink-soft); }
   .hero-lead::before { top: -6rem; right: -5rem; width: 15rem; height: 15rem; }
   .hero-steps-light { align-items: stretch; flex-direction: column; width: fit-content; gap: .28rem; }
   .hero-steps-light i { display: none; }
+  .insight-band { grid-template-columns: 1fr; margin-inline: .75rem; }
   .summary-figure-pair { gap: 1rem; }
   .capacity-tabs { padding-top: 3.9rem; }
   .capacity-tab { min-width: 0; padding-inline: .2rem; }

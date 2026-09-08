@@ -19,7 +19,7 @@ const usesStaticServices = new URLSearchParams(window.location.search).has("stat
   || !localHosts.includes(window.location.hostname);
 const locationSearchCache = new Map();
 const demoDataUrls = ["data/demo.json", "../data/demo.json"];
-const progressStepLabels = ["주소 위치 확인", "지난해 시간별 날씨 분석", "설치 용량별 절감 효과 비교"];
+const progressStepLabels = ["우리집 주소 확인", "지난해 시간별 햇빛·구름·기온 분석", "햇살의 전기요금 가치 계산"];
 let baseDemoData = null;
 let currentData = null;
 let selectedCapacity = null;
@@ -44,8 +44,8 @@ function selectedScenario(data) {
 function renderProgress(activeIndex) {
   progressSection.hidden = false;
   progressTitle.textContent = activeIndex >= progressStepLabels.length
-    ? "계산 완료 — 우리 집 예상 절감액을 구했어요"
-    : "우리 집 태양광 절감 효과를 계산하고 있어요";
+    ? "계산 완료 — 우리집 햇살의 예상 가치를 구했어요"
+    : "우리집 지붕의 지난 1년 햇살 가치를 계산하고 있어요";
   progressList.innerHTML = progressStepLabels.map((label, index) => {
     const state = index < activeIndex ? "is-done" : index === activeIndex ? "is-active" : "";
     const icon = index < activeIndex ? "✓" : index === activeIndex ? "" : String(index + 1);
@@ -218,6 +218,7 @@ function renderHero(data, recommendation) {
   $("#hero-missed").textContent = won(annual.saved_won);
   $("#hero-monthly").textContent = won(annual.saved_won / 12);
   $("#hero-rate").textContent = `${number(annual.saved_won / annual.before_won * 100, 1)}%`;
+  $("#hero-context").textContent = data.input_summary.address.includes("검색해 선택한 위치") ? "검색한 우리집 위치" : "현재 시연 예시";
 }
 
 function renderSummary(data, recommendation) {
