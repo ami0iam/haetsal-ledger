@@ -13,7 +13,7 @@
   <header class="site-header">
     <a href="#top" class="brand">햇살가계부 <span>우리 집 태양광 절감 효과 미리 보기</span></a>
     <nav class="site-nav" aria-label="화면 바로가기">
-      <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#evidence">계산 근거</a>
+      <a href="#location">주소 검색</a><a href="#result">예상 절감</a><a href="#capacity">용량별 비교</a><a href="#evidence">계산 근거</a>
       <span class="header-note"><i aria-hidden="true"></i>동작형 웹 시제품</span>
     </nav>
   </header>
@@ -21,12 +21,26 @@
     <div id="loading" class="status-card" role="status">시연 데이터를 불러오고 있어요.</div>
     <div id="error" class="status-card error" role="alert" hidden></div>
     <div id="app" hidden>
-      <section id="top" class="hero">
-        <p class="eyebrow">우리 집 태양광 절감 효과를 미리 보는 서비스</p>
-        <h1>작년 우리 집에<br><em>태양광이 있었다면?</em></h1>
-        <p class="hero-copy">주소를 입력하면 지난해 우리 집 위치의 날씨로 태양광 발전량을 예측해요. 태양광이 있었다면 1년 전기요금이 얼마나 줄었을지, 설치 용량에 따라 절감 효과가 어떻게 달라지는지 확인해 보세요.</p>
-        <div class="hero-steps" aria-label="서비스 이용 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>태양광 설치 효과 계산</span></div>
-        <a class="primary-link" href="#location">우리 집 예상 절감액 계산하기 <span aria-hidden="true">↓</span></a>
+      <section id="top" class="hero-lead">
+        <div class="hero-lead-grid">
+          <div>
+            <p class="hero-eyebrow">이미 지나간 작년 전기요금</p>
+            <h1>작년에 태양광이 있었다면,<br><em>내지 않아도 됐을 돈</em></h1>
+            <p class="hero-copy">태양광을 생각해 본 적 없어도 괜찮아요. 주소만 넣으면 우리 집 위치의 지난해 날씨로, 태양광이 있었다면 작년 전기요금이 얼마나 줄었을지 계산해 드려요.</p>
+            <a class="primary-link solid" href="#location">우리 집은 얼마였는지 보기 <span aria-hidden="true">↓</span></a>
+          </div>
+          <aside class="hero-loss-card">
+            <p class="hero-loss-label">현재 시연 예시 · <span id="hero-capacity"></span> 설치 가정</p>
+            <p class="hero-loss-lead">작년 한 해, 태양광이 있었다면<br>아낄 수 있었던 전기요금</p>
+            <strong class="hero-loss-value" id="hero-missed"></strong>
+            <div class="hero-loss-figures">
+              <div><span>월평균 절감</span><strong id="hero-monthly"></strong></div>
+              <div><span>작년 요금 대비</span><strong id="hero-rate"></strong></div>
+            </div>
+            <p class="hero-loss-note">위치의 지난해 날씨와 AMI 표본 기반 전기 사용 샘플, 공개 주택용 전기요금 기준으로 계산했어요.</p>
+          </aside>
+        </div>
+        <div class="hero-steps-light" aria-label="계산 순서"><span>주소 위치 확인</span><i aria-hidden="true">→</i><span>지난해 시간별 날씨 분석</span><i aria-hidden="true">→</i><span>작년 전기요금 다시 계산</span></div>
         <p class="demo-notice" id="demo-notice"></p>
       </section>
 
@@ -91,6 +105,10 @@
           <p class="breakdown-note" id="delta-note"></p>
         </article>
 
+      </section>
+
+      <section id="capacity" class="screen section-shell pale capacity-section" aria-labelledby="capacity-title">
+        <div class="section-heading"><div><p class="eyebrow">3. 용량별로 자세히 보기</p><h2 id="capacity-title">용량을 바꿔 보면<br>결과가 어떻게 달라질까요?</h2></div><p>용량을 선택하면 발전량·요금·절감액과 월별 그래프가 함께 바뀝니다.</p></div>
         <article class="capacity-explorer">
           <div class="card-heading"><div><p class="mini-label">설치 용량별 예상 이익 비교</p><h3>용량을 바꿔 보며 전기요금 절감 효과를 비교해 보세요</h3></div></div>
           <div class="capacity-tabs" id="capacity-tabs" role="tablist" aria-label="설치 용량 선택"></div>
@@ -111,7 +129,7 @@
       </section>
 
       <section id="evidence" class="screen section-shell" aria-labelledby="evidence-title">
-        <div class="section-heading"><div><p class="eyebrow">3. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
+        <div class="section-heading"><div><p class="eyebrow">4. 계산 근거</p><h2 id="evidence-title">이 숫자는<br>이렇게 구했어요</h2></div><p>검색한 위치의 지난 날씨, 명시된 AMI 샘플 시나리오, 공개 요금 기준을 나눠 확인했어요.</p></div>
         <div class="receipt-grid light" id="receipt-grid"></div>
         <details class="numbers-details evidence-data-details">
           <summary>월별 계산값과 날씨 자세히 보기</summary>

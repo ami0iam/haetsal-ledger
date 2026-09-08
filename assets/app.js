@@ -201,6 +201,15 @@ function tierSentence(scenario) {
   return `작년 ${monthLabel(month.month)}에는 전기요금 ${month.before.tier}단계였지만, ${scenario.capacity_kwp}kW 태양광이 있었다면 ${month.after.tier}단계로 예상돼요.`;
 }
 
+function renderHero(data, recommendation) {
+  const recommended = scenarioFor(data, recommendation.capacity_kwp);
+  const annual = recommended.annual;
+  $("#hero-capacity").textContent = `${recommendation.capacity_kwp}kW`;
+  $("#hero-missed").textContent = won(annual.saved_won);
+  $("#hero-monthly").textContent = won(annual.saved_won / 12);
+  $("#hero-rate").textContent = `${number(annual.saved_won / annual.before_won * 100, 1)}%`;
+}
+
 function renderSummary(data, recommendation) {
   const recommended = scenarioFor(data, recommendation.capacity_kwp);
   const recommendedAnnual = recommended.annual;
@@ -326,6 +335,7 @@ function render(data) {
   renderBars($("#bill-chart"), billMonths, "before_won", "after_won", "bill");
   $("#numbers-detail").innerHTML = `<div class="number-grid"><div><span>작년 우리 집 사용</span><strong>${number(annual.home_use_kwh)} kWh</strong></div><div><span>태양광이 채운 전기</span><strong>${number(solarCoveredKwh)} kWh</strong></div><div><span>한전에서 계속 산 전기</span><strong>${number(gridPurchaseKwh)} kWh</strong></div><div><span>작년 전기요금 기준</span><strong>${won(annual.before_won)}</strong></div><div><span>설치 후 예상</span><strong>${won(annual.after_won)}</strong></div><div><span>1년 예상 절감</span><strong>${won(annual.saved_won)}</strong></div></div>`;
   $("#monthly-detail").innerHTML = `<table><caption>${scenario.capacity_kwp}kW 설치 가정 월별 계산값</caption><thead><tr><th>월</th><th>전기 사용</th><th>예상 발전</th><th>설치 전 요금</th><th>설치 후 요금</th><th>예상 절감</th></tr></thead><tbody>${scenario.months.map((item) => `<tr><th>${monthLabel(item.month)}</th><td>${number(item.home_use_kwh)} kWh</td><td>${number(item.solar_kwh)} kWh</td><td>${won(item.before.total_won)}</td><td>${won(item.after.total_won)}</td><td>${won(item.saved_won)}</td></tr>`).join("")}</tbody></table>`;
+  renderHero(data, recommendation);
   renderSummary(data, recommendation);
   renderCapacityTabs(data);
   renderCapacityMetrics(scenario);
